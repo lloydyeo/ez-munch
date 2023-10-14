@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "591752991652",
+    "project_id": "ez-munch-c43dc",
+    "storage_bucket": "ez-munch-c43dc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591752991652:android:c1f72b6c0a575d64836731",
+        "android_client_info": {
+          "package_name": "sg.ezmunch.app.delivery.client"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "591752991652-3brnccsgh5tnvq982l46qukm5d72c6h1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sg.ezmunch.app.delivery.client",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "591752991652-8j4v8okepd983mjvqaeisfqebnrkndou.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sg.ezmunch.app.delivery.client",
+            "certificate_hash": "28671ab3565c6e29a448ec412bbbc7e2e94d69ac"
+          }
+        },
+        {
+          "client_id": "591752991652-gg51913aeeqihh29p6ecnlmrsasjm9cv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sg.ezmunch.app.delivery.client",
+            "certificate_hash": "720287b96c769aaa7f6f8c9917ed024a1926a952"
+          }
+        },
+        {
+          "client_id": "591752991652-mf1p03j3ecf4l34gu4dhbahaj1j11nb1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAujTO1bCflYG0JJaWnxpksTh4UxqqRlt0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "591752991652-mf1p03j3ecf4l34gu4dhbahaj1j11nb1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "591752991652-edd0gqcfcqn5m7epdjv98h401uuh30ak.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "sg.ezmunch.app.delivery.client"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
