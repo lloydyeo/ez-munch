@@ -138,10 +138,10 @@ class _QRCodePageWidgetState extends State<QRCodePageWidget> {
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 10.0),
                             child: Container(
-                              width: 200.0,
+                              width: 300.0,
                               height: 40.0,
                               child: custom_widgets.DownloadImageBtn(
-                                width: 200.0,
+                                width: 300.0,
                                 height: 40.0,
                                 imageUrl: qRCodePageCartsRecord.paynowQrcodeUrl,
                                 downloadQrCode: () async {},
