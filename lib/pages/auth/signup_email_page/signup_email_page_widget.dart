@@ -105,7 +105,7 @@ class _SignupEmailPageWidgetState extends State<SignupEmailPageWidget> {
                             style: FlutterFlowTheme.of(context)
                                 .headlineLarge
                                 .override(
-                                  fontFamily: 'Outfit',
+                                  fontFamily: 'Poppins',
                                   color: FlutterFlowTheme.of(context)
                                       .primaryBtnText,
                                 ),

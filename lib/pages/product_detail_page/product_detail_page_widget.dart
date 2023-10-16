@@ -355,6 +355,61 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                                                                   _model.checkboxValueMap[
                                                                           optionValuesColProductOptionValuesRecord] =
                                                                       newValue!);
+                                                              if (newValue!) {
+                                                                logFirebaseEvent(
+                                                                    'PRODUCT_DETAIL_Checkbox_qt0qzozx_ON_TOGG');
+                                                                logFirebaseEvent(
+                                                                    'Checkbox_update_page_state');
+                                                                setState(() {
+                                                                  _model.addToSelectedProductValues(
+                                                                      optionValuesColProductOptionValuesRecord);
+                                                                  _model
+                                                                      .perUnitPrice = _model
+                                                                          .perUnitPrice +
+                                                                      valueOrDefault<
+                                                                          double>(
+                                                                        optionValuesColProductOptionValuesRecord.hasValue()
+                                                                            ? optionValuesColProductOptionValuesRecord.addOnPrice
+                                                                            : 0.0,
+                                                                        0.0,
+                                                                      );
+                                                                });
+                                                                logFirebaseEvent(
+                                                                    'Checkbox_show_snack_bar');
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                  SnackBar(
+                                                                    content:
+                                                                        Text(
+                                                                      'perUnitPrice (${valueOrDefault<String>(
+                                                                        formatNumber(
+                                                                          _model
+                                                                              .perUnitPrice,
+                                                                          formatType:
+                                                                              FormatType.decimal,
+                                                                          decimalType:
+                                                                              DecimalType.automatic,
+                                                                          currency:
+                                                                              '',
+                                                                        ),
+                                                                        '0',
+                                                                      )})',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryText,
+                                                                      ),
+                                                                    ),
+                                                                    duration: Duration(
+                                                                        milliseconds:
+                                                                            4000),
+                                                                    backgroundColor:
+                                                                        FlutterFlowTheme.of(context)
+                                                                            .secondary,
+                                                                  ),
+                                                                );
+                                                              }
                                                             },
                                                             activeColor:
                                                                 FlutterFlowTheme.of(
@@ -367,7 +422,7 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                                                           ),
                                                         ),
                                                         Text(
-                                                          '${optionValuesColProductOptionValuesRecord.value}${optionValuesColProductOptionValuesRecord.addOnPrice <= 0.0 ? ('') : '(+ ${formatNumber(
+                                                          '${optionValuesColProductOptionValuesRecord.value}${optionValuesColProductOptionValuesRecord.addOnPrice <= 0.0 ? ('') : ' (+ ${formatNumber(
                                                               optionValuesColProductOptionValuesRecord
                                                                   .addOnPrice,
                                                               formatType:
@@ -505,46 +560,63 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
 
                           var cartItemsRecordReference1 =
                               CartItemsRecord.collection.doc();
-                          await cartItemsRecordReference1
-                              .set(createCartItemsRecordData(
-                            cart: FFAppState().cart,
-                            product: productDetailPageProductsRecord.reference,
-                            name: productDetailPageProductsRecord.name,
-                            price: productDetailPageProductsRecord.price *
-                                _model.quantityControllerValue!,
-                            isThirdPartyPickup: false,
-                            cartUuid: _model.newlyCreatedCart?.uuid,
-                            productImage:
-                                productDetailPageProductsRecord.coverImageUrl,
-                            vendor: productDetailPageProductsRecord.vendor,
-                            quantity: valueOrDefault<int>(
-                              _model.quantityControllerValue,
-                              1,
+                          await cartItemsRecordReference1.set({
+                            ...createCartItemsRecordData(
+                              cart: FFAppState().cart,
+                              product:
+                                  productDetailPageProductsRecord.reference,
+                              name: productDetailPageProductsRecord.name,
+                              price: (productDetailPageProductsRecord.price +
+                                      _model.perUnitPrice) *
+                                  _model.quantityControllerValue!,
+                              isThirdPartyPickup: false,
+                              cartUuid: _model.newlyCreatedCart?.uuid,
+                              productImage:
+                                  productDetailPageProductsRecord.coverImageUrl,
+                              vendor: productDetailPageProductsRecord.vendor,
+                              quantity: valueOrDefault<int>(
+                                _model.quantityControllerValue,
+                                1,
+                              ),
                             ),
-                          ));
+                            ...mapToFirestore(
+                              {
+                                'product_option_values': _model
+                                    .selectedProductValues
+                                    .map((e) => e.reference)
+                                    .toList(),
+                              },
+                            ),
+                          });
                           _model.newlyCreatedCartItem =
-                              CartItemsRecord.getDocumentFromData(
-                                  createCartItemsRecordData(
-                                    cart: FFAppState().cart,
-                                    product: productDetailPageProductsRecord
-                                        .reference,
-                                    name: productDetailPageProductsRecord.name,
-                                    price:
-                                        productDetailPageProductsRecord.price *
-                                            _model.quantityControllerValue!,
-                                    isThirdPartyPickup: false,
-                                    cartUuid: _model.newlyCreatedCart?.uuid,
-                                    productImage:
-                                        productDetailPageProductsRecord
-                                            .coverImageUrl,
-                                    vendor:
-                                        productDetailPageProductsRecord.vendor,
-                                    quantity: valueOrDefault<int>(
-                                      _model.quantityControllerValue,
-                                      1,
-                                    ),
-                                  ),
-                                  cartItemsRecordReference1);
+                              CartItemsRecord.getDocumentFromData({
+                            ...createCartItemsRecordData(
+                              cart: FFAppState().cart,
+                              product:
+                                  productDetailPageProductsRecord.reference,
+                              name: productDetailPageProductsRecord.name,
+                              price: (productDetailPageProductsRecord.price +
+                                      _model.perUnitPrice) *
+                                  _model.quantityControllerValue!,
+                              isThirdPartyPickup: false,
+                              cartUuid: _model.newlyCreatedCart?.uuid,
+                              productImage:
+                                  productDetailPageProductsRecord.coverImageUrl,
+                              vendor: productDetailPageProductsRecord.vendor,
+                              quantity: valueOrDefault<int>(
+                                _model.quantityControllerValue,
+                                1,
+                              ),
+                            ),
+                            ...mapToFirestore(
+                              {
+                                'product_option_values': _model
+                                    .selectedProductValues
+                                    .map((e) => e.reference)
+                                    .toList(),
+                              },
+                            ),
+                          }, cartItemsRecordReference1);
                           logFirebaseEvent('AddToCartBtn_backend_call');
 
                           await FFAppState().cart!.update({
@@ -602,44 +674,67 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
 
                           var cartItemsRecordReference2 =
                               CartItemsRecord.collection.doc();
-                          await cartItemsRecordReference2
-                              .set(createCartItemsRecordData(
-                            cart: FFAppState().cart,
-                            product: productDetailPageProductsRecord.reference,
-                            name: productDetailPageProductsRecord.name,
-                            price: productDetailPageProductsRecord.price *
-                                _model.quantityControllerValue!,
-                            isThirdPartyPickup: false,
-                            productImage:
-                                productDetailPageProductsRecord.coverImageUrl,
-                            vendor: productDetailPageProductsRecord.vendor,
-                            quantity: valueOrDefault<int>(
-                              _model.quantityControllerValue,
-                              1,
+                          await cartItemsRecordReference2.set({
+                            ...createCartItemsRecordData(
+                              cart: FFAppState().cart,
+                              product:
+                                  productDetailPageProductsRecord.reference,
+                              name: productDetailPageProductsRecord.name,
+                              price: (productDetailPageProductsRecord.price +
+                                      valueOrDefault<double>(
+                                        _model.perUnitPrice,
+                                        0.0,
+                                      )) *
+                                  _model.quantityControllerValue!,
+                              isThirdPartyPickup: false,
+                              productImage:
+                                  productDetailPageProductsRecord.coverImageUrl,
+                              vendor: productDetailPageProductsRecord.vendor,
+                              quantity: valueOrDefault<int>(
+                                _model.quantityControllerValue,
+                                1,
+                              ),
                             ),
-                          ));
+                            ...mapToFirestore(
+                              {
+                                'product_option_values': _model
+                                    .selectedProductValues
+                                    .map((e) => e.reference)
+                                    .toList(),
+                              },
+                            ),
+                          });
                           _model.newlyCreatedCartItemWithoutCart =
-                              CartItemsRecord.getDocumentFromData(
-                                  createCartItemsRecordData(
-                                    cart: FFAppState().cart,
-                                    product: productDetailPageProductsRecord
-                                        .reference,
-                                    name: productDetailPageProductsRecord.name,
-                                    price:
-                                        productDetailPageProductsRecord.price *
-                                            _model.quantityControllerValue!,
-                                    isThirdPartyPickup: false,
-                                    productImage:
-                                        productDetailPageProductsRecord
-                                            .coverImageUrl,
-                                    vendor:
-                                        productDetailPageProductsRecord.vendor,
-                                    quantity: valueOrDefault<int>(
-                                      _model.quantityControllerValue,
-                                      1,
-                                    ),
-                                  ),
-                                  cartItemsRecordReference2);
+                              CartItemsRecord.getDocumentFromData({
+                            ...createCartItemsRecordData(
+                              cart: FFAppState().cart,
+                              product:
+                                  productDetailPageProductsRecord.reference,
+                              name: productDetailPageProductsRecord.name,
+                              price: (productDetailPageProductsRecord.price +
+                                      valueOrDefault<double>(
+                                        _model.perUnitPrice,
+                                        0.0,
+                                      )) *
+                                  _model.quantityControllerValue!,
+                              isThirdPartyPickup: false,
+                              productImage:
+                                  productDetailPageProductsRecord.coverImageUrl,
+                              vendor: productDetailPageProductsRecord.vendor,
+                              quantity: valueOrDefault<int>(
+                                _model.quantityControllerValue,
+                                1,
+                              ),
+                            ),
+                            ...mapToFirestore(
+                              {
+                                'product_option_values': _model
+                                    .selectedProductValues
+                                    .map((e) => e.reference)
+                                    .toList(),
+                              },
+                            ),
+                          }, cartItemsRecordReference2);
                           // AddCartItemToCartInDB
                           logFirebaseEvent(
                               'AddToCartBtn_AddCartItemToCartInDB');

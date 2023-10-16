@@ -100,7 +100,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                           style: FlutterFlowTheme.of(context)
                               .headlineLarge
                               .override(
-                                fontFamily: 'Outfit',
+                                fontFamily: 'Poppins',
                                 color:
                                     FlutterFlowTheme.of(context).primaryBtnText,
                               ),

@@ -234,6 +234,51 @@ class SendReceiptEmailCall {
   }
 }
 
+class GetPostalCodeCall {
+  static Future<ApiCallResponse> call({
+    String? postalCode = '',
+  }) {
+    return ApiManager.instance.makeApiCall(
+      callName: 'getPostalCode',
+      apiUrl: 'https://onemap.sg/api/common/elastic/search',
+      callType: ApiCallType.GET,
+      headers: {},
+      params: {
+        'searchVal': postalCode,
+        'getAddrDetails': "Y",
+        'returnGeom': "N",
+        'pageNum': 1,
+      },
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+    );
+  }
+
+  static dynamic searchval(dynamic response) => getJsonField(
+        response,
+        r'''$.results[0].SEARCHVAL''',
+        true,
+      );
+  static dynamic blkno(dynamic response) => getJsonField(
+        response,
+        r'''$.results[0].BLK_NO''',
+      );
+  static dynamic roadname(dynamic response) => getJsonField(
+        response,
+        r'''$.results[0].ROAD_NAME''',
+      );
+  static dynamic building(dynamic response) => getJsonField(
+        response,
+        r'''$.results[0].BUILDING''',
+      );
+  static dynamic address(dynamic response) => getJsonField(
+        response,
+        r'''$.results[0].ADDRESS''',
+      );
+}
+
 class ApiPagingParams {
   int nextPageNumber = 0;
   int numItems = 0;

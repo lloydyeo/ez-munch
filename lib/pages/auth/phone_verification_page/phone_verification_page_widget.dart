@@ -109,7 +109,7 @@ class _PhoneVerificationPageWidgetState
                             style: FlutterFlowTheme.of(context)
                                 .headlineLarge
                                 .override(
-                                  fontFamily: 'Outfit',
+                                  fontFamily: 'Poppins',
                                   color: FlutterFlowTheme.of(context)
                                       .primaryBtnText,
                                 ),
@@ -127,7 +127,7 @@ class _PhoneVerificationPageWidgetState
                             style: FlutterFlowTheme.of(context)
                                 .headlineSmall
                                 .override(
-                                  fontFamily: 'Outfit',
+                                  fontFamily: 'Poppins',
                                   color: FlutterFlowTheme.of(context)
                                       .primaryBtnText,
                                 ),

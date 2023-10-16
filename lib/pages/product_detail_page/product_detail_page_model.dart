@@ -14,6 +14,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class ProductDetailPageModel extends FlutterFlowModel<ProductDetailPageWidget> {
+  ///  Local state fields for this page.
+
+  List<ProductOptionValuesRecord> selectedProductValues = [];
+  void addToSelectedProductValues(ProductOptionValuesRecord item) =>
+      selectedProductValues.add(item);
+  void removeFromSelectedProductValues(ProductOptionValuesRecord item) =>
+      selectedProductValues.remove(item);
+  void removeAtIndexFromSelectedProductValues(int index) =>
+      selectedProductValues.removeAt(index);
+  void insertAtIndexInSelectedProductValues(
+          int index, ProductOptionValuesRecord item) =>
+      selectedProductValues.insert(index, item);
+  void updateSelectedProductValuesAtIndex(
+          int index, Function(ProductOptionValuesRecord) updateFn) =>
+      selectedProductValues[index] = updateFn(selectedProductValues[index]);
+
+  double perUnitPrice = 0.0;
+
   ///  State fields for stateful widgets in this page.
 
   final unfocusNode = FocusNode();

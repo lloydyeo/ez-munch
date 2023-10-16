@@ -81,6 +81,16 @@ class CartsRecord extends FirestoreRecord {
   List<DocumentReference> get vendors => _vendors ?? const [];
   bool hasVendors() => _vendors != null;
 
+  // "postal_code" field.
+  int? _postalCode;
+  int get postalCode => _postalCode ?? 0;
+  bool hasPostalCode() => _postalCode != null;
+
+  // "street_name" field.
+  String? _streetName;
+  String get streetName => _streetName ?? '';
+  bool hasStreetName() => _streetName != null;
+
   void _initializeFields() {
     _user = snapshotData['user'] as DocumentReference?;
     _userEmail = snapshotData['user_email'] as String?;
@@ -95,6 +105,8 @@ class CartsRecord extends FirestoreRecord {
     _fazzOrderId = snapshotData['fazz_order_id'] as String?;
     _items = getDataList(snapshotData['items']);
     _vendors = getDataList(snapshotData['vendors']);
+    _postalCode = castToType<int>(snapshotData['postal_code']);
+    _streetName = snapshotData['street_name'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -142,6 +154,8 @@ Map<String, dynamic> createCartsRecordData({
   DateTime? createdAt,
   DateTime? updatedAt,
   String? fazzOrderId,
+  int? postalCode,
+  String? streetName,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -156,6 +170,8 @@ Map<String, dynamic> createCartsRecordData({
       'created_at': createdAt,
       'updated_at': updatedAt,
       'fazz_order_id': fazzOrderId,
+      'postal_code': postalCode,
+      'street_name': streetName,
     }.withoutNulls,
   );
 
@@ -180,7 +196,9 @@ class CartsRecordDocumentEquality implements Equality<CartsRecord> {
         e1?.updatedAt == e2?.updatedAt &&
         e1?.fazzOrderId == e2?.fazzOrderId &&
         listEquality.equals(e1?.items, e2?.items) &&
-        listEquality.equals(e1?.vendors, e2?.vendors);
+        listEquality.equals(e1?.vendors, e2?.vendors) &&
+        e1?.postalCode == e2?.postalCode &&
+        e1?.streetName == e2?.streetName;
   }
 
   @override
@@ -197,7 +215,9 @@ class CartsRecordDocumentEquality implements Equality<CartsRecord> {
         e?.updatedAt,
         e?.fazzOrderId,
         e?.items,
-        e?.vendors
+        e?.vendors,
+        e?.postalCode,
+        e?.streetName
       ]);
 
   @override

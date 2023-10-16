@@ -106,23 +106,27 @@ class _QRCodePageWidgetState extends State<QRCodePageWidget> {
                   ),
                   Align(
                     alignment: AlignmentDirectional(0.00, 0.00),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: CachedNetworkImage(
-                        fadeInDuration: Duration(milliseconds: 2400),
-                        fadeOutDuration: Duration(milliseconds: 2400),
-                        imageUrl: qRCodePageCartsRecord.paynowQrcodeUrl,
-                        width: double.infinity,
-                        height: 400.0,
-                        fit: BoxFit.contain,
+                    child: Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 50.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: CachedNetworkImage(
+                          fadeInDuration: Duration(milliseconds: 2400),
+                          fadeOutDuration: Duration(milliseconds: 2400),
+                          imageUrl: qRCodePageCartsRecord.paynowQrcodeUrl,
+                          width: MediaQuery.sizeOf(context).width * 0.8,
+                          height: 300.0,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                   ),
                   Text(
-                    'We\'re almost done!\nScan the QR Code above to make payment!',
+                    'We\'re almost done!\nJust download the QR code using your preferred banking app & use the PayNow option to make payment! ',
                     textAlign: TextAlign.center,
                     style: FlutterFlowTheme.of(context).titleLarge.override(
-                          fontFamily: 'Outfit',
+                          fontFamily: 'Poppins',
                           color: Color(0xFFEE7D31),
                         ),
                   ),
@@ -137,14 +141,45 @@ class _QRCodePageWidgetState extends State<QRCodePageWidget> {
                           Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 10.0),
-                            child: Container(
-                              width: 300.0,
-                              height: 40.0,
-                              child: custom_widgets.DownloadImageBtn(
+                            child: InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                logFirebaseEvent(
+                                    'Q_R_CODE_Container_a7tmcy3j_ON_TAP');
+                                logFirebaseEvent(
+                                    'DownloadImageBtn_show_snack_bar');
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'QR Code has been downloaded!',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily: 'Noto Sans',
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryBtnText,
+                                          ),
+                                    ),
+                                    duration: Duration(milliseconds: 4000),
+                                    backgroundColor:
+                                        FlutterFlowTheme.of(context).primary,
+                                  ),
+                                );
+                              },
+                              child: Container(
                                 width: 300.0,
                                 height: 40.0,
-                                imageUrl: qRCodePageCartsRecord.paynowQrcodeUrl,
-                                downloadQrCode: () async {},
+                                child: custom_widgets.DownloadImageBtn(
+                                  width: 300.0,
+                                  height: 40.0,
+                                  imageUrl:
+                                      qRCodePageCartsRecord.paynowQrcodeUrl,
+                                  downloadQrCode: () async {},
+                                ),
                               ),
                             ),
                           ),

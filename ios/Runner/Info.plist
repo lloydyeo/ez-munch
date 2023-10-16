@@ -61,7 +61,10 @@
     <string>In order to take a picture or video, this app requires permission to access the camera.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>In order to upload data, this app requires permission to access the photo library.</string>
-
+	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>In order to determine the nearest eligible vendors, this app requires permission to access your location</string>
+	<key>PermissionGroupNotification</key>
+    <string>In order to update you of your order, this app requires permission to send you notification</string>
     <key>UIBackgroundModes</key>
     <array>
         <string>fetch</string>

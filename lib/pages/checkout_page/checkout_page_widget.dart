@@ -1,16 +1,21 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
+import '/components/postal_code_retrieval_dialog_widget.dart';
 import '/components/preparing_payment_dialog_widget.dart';
+import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +41,17 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
 
     logFirebaseEvent('screen_view',
         parameters: {'screen_name': 'CheckoutPage'});
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      logFirebaseEvent('CHECKOUT_CheckoutPage_ON_INIT_STATE');
+      logFirebaseEvent('CheckoutPage_firestore_query');
+      _model.postalCodes = await queryPostalCodesRecordOnce(
+        singleRecord: true,
+      ).then((s) => s.firstOrNull);
+    });
+
+    _model.textController1 ??= TextEditingController();
+    _model.textController2 ??= TextEditingController();
   }
 
   @override
@@ -98,7 +114,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
               title: Text(
                 'Checkout',
                 style: FlutterFlowTheme.of(context).headlineMedium.override(
-                      fontFamily: 'Outfit',
+                      fontFamily: 'Poppins',
                       color: Colors.white,
                       fontSize: 22.0,
                     ),
@@ -123,11 +139,11 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Delivery',
+                              'Where should we deliver to?',
                               style: FlutterFlowTheme.of(context)
                                   .titleLarge
                                   .override(
-                                    fontFamily: 'Outfit',
+                                    fontFamily: 'Poppins',
                                     fontSize: 18.0,
                                   ),
                             ),
@@ -151,7 +167,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                       Container(
                                         width:
                                             MediaQuery.sizeOf(context).width *
-                                                0.8,
+                                                0.95,
                                         decoration: BoxDecoration(
                                           color: FlutterFlowTheme.of(context)
                                               .secondaryBackground,
@@ -179,55 +195,517 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              -1.00, 0.00),
-                                                      child: Text(
-                                                        'Home',
-                                                        textAlign:
-                                                            TextAlign.start,
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodySmall
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Outfit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontSize:
-                                                                      12.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
+                                                    Builder(
+                                                      builder: (context) =>
+                                                          Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    0.0,
+                                                                    5.0,
+                                                                    0.0,
+                                                                    0.0),
+                                                        child: StreamBuilder<
+                                                            List<
+                                                                PostalCodesRecord>>(
+                                                          stream:
+                                                              queryPostalCodesRecord(),
+                                                          builder: (context,
+                                                              snapshot) {
+                                                            // Customize what your widget looks like when it's loading.
+                                                            if (!snapshot
+                                                                .hasData) {
+                                                              return Center(
+                                                                child: SizedBox(
+                                                                  width: 50.0,
+                                                                  height: 50.0,
+                                                                  child:
+                                                                      SpinKitThreeBounce(
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .primary,
+                                                                    size: 50.0,
+                                                                  ),
                                                                 ),
+                                                              );
+                                                            }
+                                                            List<PostalCodesRecord>
+                                                                postalCodeRetrievalDialogPostalCodesRecordList =
+                                                                snapshot.data!;
+                                                            return FlutterFlowDropDown<
+                                                                String>(
+                                                              controller: _model
+                                                                      .postalCodeRetrievalDialogValueController ??=
+                                                                  FormFieldController<
+                                                                          String>(
+                                                                      null),
+                                                              options: postalCodeRetrievalDialogPostalCodesRecordList
+                                                                  .map((e) => e
+                                                                      .postalCode
+                                                                      .toString())
+                                                                  .toList(),
+                                                              onChanged:
+                                                                  (val) async {
+                                                                setState(() =>
+                                                                    _model.postalCodeRetrievalDialogValue =
+                                                                        val);
+                                                                logFirebaseEvent(
+                                                                    'CHECKOUT_PostalCodeRetrievalDialog_ON_FO');
+                                                                var _shouldSetState =
+                                                                    false;
+                                                                logFirebaseEvent(
+                                                                    'PostalCodeRetrievalDialog_alert_dialog');
+                                                                showAlignedDialog(
+                                                                  context:
+                                                                      context,
+                                                                  isGlobal:
+                                                                      true,
+                                                                  avoidOverflow:
+                                                                      false,
+                                                                  targetAnchor: AlignmentDirectional(
+                                                                          0.0,
+                                                                          0.0)
+                                                                      .resolve(
+                                                                          Directionality.of(
+                                                                              context)),
+                                                                  followerAnchor: AlignmentDirectional(
+                                                                          0.0,
+                                                                          0.0)
+                                                                      .resolve(
+                                                                          Directionality.of(
+                                                                              context)),
+                                                                  builder:
+                                                                      (dialogContext) {
+                                                                    return Material(
+                                                                      color: Colors
+                                                                          .transparent,
+                                                                      child:
+                                                                          GestureDetector(
+                                                                        onTap: () => _model.unfocusNode.canRequestFocus
+                                                                            ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+                                                                            : FocusScope.of(context).unfocus(),
+                                                                        child:
+                                                                            Container(
+                                                                          height:
+                                                                              70.0,
+                                                                          width:
+                                                                              MediaQuery.sizeOf(context).width * 0.96,
+                                                                          child:
+                                                                              PostalCodeRetrievalDialogWidget(),
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                ).then((value) =>
+                                                                    setState(
+                                                                        () {}));
+
+                                                                logFirebaseEvent(
+                                                                    'PostalCodeRetrievalDialog_backend_call');
+                                                                _model.postalCodeResponse =
+                                                                    await GetPostalCodeCall
+                                                                        .call(
+                                                                  postalCode: _model
+                                                                      .postalCodeRetrievalDialogValue,
+                                                                );
+                                                                _shouldSetState =
+                                                                    true;
+                                                                logFirebaseEvent(
+                                                                    'PostalCodeRetrievalDialog_dismiss_dialog');
+                                                                Navigator.pop(
+                                                                    context);
+                                                                if ((_model
+                                                                        .postalCodeResponse
+                                                                        ?.succeeded ??
+                                                                    true)) {
+                                                                  logFirebaseEvent(
+                                                                      'PostalCodeRetrievalDialog_update_page_st');
+                                                                  setState(() {
+                                                                    _model.address =
+                                                                        GetPostalCodeCall
+                                                                            .address(
+                                                                      (_model.postalCodeResponse
+                                                                              ?.jsonBody ??
+                                                                          ''),
+                                                                    ).toString();
+                                                                  });
+                                                                  if (_shouldSetState)
+                                                                    setState(
+                                                                        () {});
+                                                                  return;
+                                                                } else {
+                                                                  logFirebaseEvent(
+                                                                      'PostalCodeRetrievalDialog_show_snack_bar');
+                                                                  ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(
+                                                                    SnackBar(
+                                                                      content:
+                                                                          Text(
+                                                                        'Unable to retrieve your postal code',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).primaryBtnText,
+                                                                        ),
+                                                                      ),
+                                                                      duration: Duration(
+                                                                          milliseconds:
+                                                                              4000),
+                                                                      backgroundColor:
+                                                                          FlutterFlowTheme.of(context)
+                                                                              .primary,
+                                                                    ),
+                                                                  );
+                                                                  if (_shouldSetState)
+                                                                    setState(
+                                                                        () {});
+                                                                  return;
+                                                                }
+
+                                                                if (_shouldSetState)
+                                                                  setState(
+                                                                      () {});
+                                                              },
+                                                              width: 320.0,
+                                                              height: 40.0,
+                                                              searchHintTextStyle:
+                                                                  FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .labelMedium
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Noto Sans',
+                                                                        fontSize:
+                                                                            14.0,
+                                                                      ),
+                                                              textStyle:
+                                                                  FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Noto Sans',
+                                                                        fontSize:
+                                                                            14.0,
+                                                                      ),
+                                                              hintText:
+                                                                  'Select postal code...',
+                                                              searchHintText:
+                                                                  'Select postal code',
+                                                              icon: Icon(
+                                                                Icons
+                                                                    .keyboard_arrow_down_rounded,
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .secondaryText,
+                                                                size: 24.0,
+                                                              ),
+                                                              fillColor: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .secondaryBackground,
+                                                              elevation: 2.0,
+                                                              borderColor:
+                                                                  FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .alternate,
+                                                              borderWidth: 2.0,
+                                                              borderRadius: 8.0,
+                                                              margin:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0.0,
+                                                                          4.0,
+                                                                          0.0,
+                                                                          4.0),
+                                                              hidesUnderline:
+                                                                  true,
+                                                              isSearchable:
+                                                                  true,
+                                                              isMultiSelect:
+                                                                  false,
+                                                            );
+                                                          },
+                                                        ),
                                                       ),
                                                     ),
-                                                    Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              -1.00, 0.00),
-                                                      child: Text(
-                                                        '217B Sumang Walk, Matilda Portico\n#13-240 S822217',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodySmall
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Outfit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .secondaryText,
-                                                                  fontSize:
-                                                                      12.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                ),
+                                                    Container(
+                                                      width: 320.0,
+                                                      decoration: BoxDecoration(
+                                                        color: FlutterFlowTheme
+                                                                .of(context)
+                                                            .secondaryBackground,
                                                       ),
+                                                      child: Visibility(
+                                                        visible: valueOrDefault<
+                                                            bool>(
+                                                          _model.address !=
+                                                                  null &&
+                                                              _model.address !=
+                                                                  '',
+                                                          false,
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                      3.0,
+                                                                      3.0,
+                                                                      0.0,
+                                                                      3.0),
+                                                          child: Text(
+                                                            valueOrDefault<
+                                                                String>(
+                                                              _model.address,
+                                                              'Select a postal code...',
+                                                            ),
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyMedium,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Container(
+                                                          width: 60.0,
+                                                          height: 40.0,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondaryBackground,
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        0.0,
+                                                                        4.0,
+                                                                        0.0,
+                                                                        0.0),
+                                                            child: Container(
+                                                              width: 80.0,
+                                                              child:
+                                                                  TextFormField(
+                                                                controller: _model
+                                                                    .textController1,
+                                                                autofocus: true,
+                                                                obscureText:
+                                                                    false,
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  isDense: true,
+                                                                  labelText:
+                                                                      'Floor',
+                                                                  labelStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .labelMedium,
+                                                                  hintStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .labelMedium,
+                                                                  enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .alternate,
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                  ),
+                                                                  focusedBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primary,
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                  ),
+                                                                  errorBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .error,
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                  ),
+                                                                  focusedErrorBorder:
+                                                                      OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .error,
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                  ),
+                                                                  contentPadding:
+                                                                      EdgeInsetsDirectional.fromSTEB(
+                                                                          15.0,
+                                                                          20.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                                ),
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium,
+                                                                keyboardType:
+                                                                    TextInputType
+                                                                        .number,
+                                                                validator: _model
+                                                                    .textController1Validator
+                                                                    .asValidator(
+                                                                        context),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                      5.0,
+                                                                      0.0,
+                                                                      0.0,
+                                                                      0.0),
+                                                          child: Container(
+                                                            width: 60.0,
+                                                            height: 40.0,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .secondaryBackground,
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0.0,
+                                                                          4.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                              child: Container(
+                                                                width: 80.0,
+                                                                child:
+                                                                    TextFormField(
+                                                                  controller: _model
+                                                                      .textController2,
+                                                                  autofocus:
+                                                                      true,
+                                                                  obscureText:
+                                                                      false,
+                                                                  decoration:
+                                                                      InputDecoration(
+                                                                    isDense:
+                                                                        true,
+                                                                    labelText:
+                                                                        'Unit',
+                                                                    labelStyle:
+                                                                        FlutterFlowTheme.of(context)
+                                                                            .labelMedium,
+                                                                    hintStyle: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .labelMedium,
+                                                                    enabledBorder:
+                                                                        OutlineInputBorder(
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .alternate,
+                                                                        width:
+                                                                            2.0,
+                                                                      ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8.0),
+                                                                    ),
+                                                                    focusedBorder:
+                                                                        OutlineInputBorder(
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primary,
+                                                                        width:
+                                                                            2.0,
+                                                                      ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8.0),
+                                                                    ),
+                                                                    errorBorder:
+                                                                        OutlineInputBorder(
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .error,
+                                                                        width:
+                                                                            2.0,
+                                                                      ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8.0),
+                                                                    ),
+                                                                    focusedErrorBorder:
+                                                                        OutlineInputBorder(
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .error,
+                                                                        width:
+                                                                            2.0,
+                                                                      ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8.0),
+                                                                    ),
+                                                                    contentPadding:
+                                                                        EdgeInsetsDirectional.fromSTEB(
+                                                                            15.0,
+                                                                            20.0,
+                                                                            0.0,
+                                                                            0.0),
+                                                                  ),
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium,
+                                                                  keyboardType:
+                                                                      TextInputType
+                                                                          .number,
+                                                                  validator: _model
+                                                                      .textController2Validator
+                                                                      .asValidator(
+                                                                          context),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ],
                                                 ),
@@ -235,12 +713,6 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                             ),
                                           ],
                                         ),
-                                      ),
-                                      Icon(
-                                        Icons.navigate_next,
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryText,
-                                        size: 24.0,
                                       ),
                                     ],
                                   ),
@@ -278,7 +750,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                   style: FlutterFlowTheme.of(context)
                                       .titleLarge
                                       .override(
-                                        fontFamily: 'Outfit',
+                                        fontFamily: 'Poppins',
                                         fontSize: 18.0,
                                       ),
                                 ),
@@ -387,7 +859,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                                   .fromSTEB(
                                                                       0.0,
                                                                       1.0,
-                                                                      1.0,
+                                                                      8.0,
                                                                       1.0),
                                                           child: ClipRRect(
                                                             borderRadius:
@@ -410,7 +882,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                           padding:
                                                               EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      8.0,
+                                                                      0.0,
                                                                       0.0,
                                                                       4.0,
                                                                       0.0),
@@ -426,50 +898,102 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                                     .start,
                                                             children: [
                                                               Text(
-                                                                basketItemsListCartItemsRecord
-                                                                    .name,
+                                                                '${valueOrDefault<String>(
+                                                                  basketItemsListCartItemsRecord
+                                                                      .quantity
+                                                                      .toString(),
+                                                                  '1',
+                                                                )} x ${basketItemsListCartItemsRecord.name}',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .titleLarge
                                                                     .override(
                                                                       fontFamily:
-                                                                          'Outfit',
+                                                                          'Poppins',
                                                                       fontSize:
-                                                                          16.0,
+                                                                          14.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
                                                                     ),
                                                               ),
-                                                              Column(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: EdgeInsetsDirectional
+                                                              Padding(
+                                                                padding:
+                                                                    EdgeInsetsDirectional
                                                                         .fromSTEB(
+                                                                            1.0,
                                                                             0.0,
-                                                                            4.0,
-                                                                            8.0,
-                                                                            12.0),
-                                                                    child:
-                                                                        AutoSizeText(
-                                                                      '- Iced\n- Organic Whole Milk\n- 16 Oz',
-                                                                      textAlign:
-                                                                          TextAlign
+                                                                            0.0,
+                                                                            0.0),
+                                                                child: Builder(
+                                                                  builder:
+                                                                      (context) {
+                                                                    final productOptionValues = basketItemsListCartItemsRecord
+                                                                        .productOptionValues
+                                                                        .map((e) =>
+                                                                            e)
+                                                                        .toList();
+                                                                    return Column(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .max,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
                                                                               .start,
-                                                                      style: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .labelMedium
-                                                                          .override(
-                                                                            fontFamily:
-                                                                                'Noto Sans',
-                                                                            color:
-                                                                                Colors.black,
-                                                                            fontSize:
-                                                                                12.0,
+                                                                      children: List.generate(
+                                                                          productOptionValues
+                                                                              .length,
+                                                                          (productOptionValuesIndex) {
+                                                                        final productOptionValuesItem =
+                                                                            productOptionValues[productOptionValuesIndex];
+                                                                        return Padding(
+                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                              0.0,
+                                                                              4.0,
+                                                                              8.0,
+                                                                              0.0),
+                                                                          child:
+                                                                              StreamBuilder<ProductOptionValuesRecord>(
+                                                                            stream:
+                                                                                ProductOptionValuesRecord.getDocument(productOptionValuesItem),
+                                                                            builder:
+                                                                                (context, snapshot) {
+                                                                              // Customize what your widget looks like when it's loading.
+                                                                              if (!snapshot.hasData) {
+                                                                                return Center(
+                                                                                  child: SizedBox(
+                                                                                    width: 50.0,
+                                                                                    height: 50.0,
+                                                                                    child: SpinKitThreeBounce(
+                                                                                      color: FlutterFlowTheme.of(context).primary,
+                                                                                      size: 50.0,
+                                                                                    ),
+                                                                                  ),
+                                                                                );
+                                                                              }
+                                                                              final textProductOptionValuesRecord = snapshot.data!;
+                                                                              return AutoSizeText(
+                                                                                '- ${textProductOptionValuesRecord.value}'.maybeHandleOverflow(
+                                                                                  maxChars: 70,
+                                                                                  replacement: '…',
+                                                                                ),
+                                                                                textAlign: TextAlign.start,
+                                                                                style: FlutterFlowTheme.of(context).labelMedium.override(
+                                                                                      fontFamily: 'Noto Sans',
+                                                                                      color: Colors.black,
+                                                                                      fontSize: 12.0,
+                                                                                    ),
+                                                                              );
+                                                                            },
                                                                           ),
-                                                                    ),
-                                                                  ),
-                                                                ],
+                                                                        );
+                                                                      }),
+                                                                    );
+                                                                  },
+                                                                ),
                                                               ),
                                                             ],
                                                           ),
@@ -506,7 +1030,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                               .titleLarge
                                                               .override(
                                                                 fontFamily:
-                                                                    'Outfit',
+                                                                    'Poppins',
                                                                 fontSize: 14.0,
                                                               ),
                                                         ),
@@ -657,7 +1181,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                           padding:
                                                               EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      8.0,
+                                                                      0.0,
                                                                       0.0,
                                                                       4.0,
                                                                       0.0),
@@ -680,7 +1204,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                                     .titleLarge
                                                                     .override(
                                                                       fontFamily:
-                                                                          'Outfit',
+                                                                          'Poppins',
                                                                       fontSize:
                                                                           16.0,
                                                                     ),
@@ -826,7 +1350,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                               .titleLarge
                                                               .override(
                                                                 fontFamily:
-                                                                    'Outfit',
+                                                                    'Poppins',
                                                                 fontSize: 14.0,
                                                               ),
                                                         ),
@@ -893,7 +1417,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .titleLarge
                                         .override(
-                                          fontFamily: 'Outfit',
+                                          fontFamily: 'Poppins',
                                           fontSize: 18.0,
                                         ),
                                   ),
@@ -1005,7 +1529,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .titleLarge
                                         .override(
-                                          fontFamily: 'Outfit',
+                                          fontFamily: 'Poppins',
                                           fontSize: 18.0,
                                         ),
                                   ),
@@ -1272,7 +1796,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                             context)
                                                         .displaySmall
                                                         .override(
-                                                          fontFamily: 'Outfit',
+                                                          fontFamily: 'Poppins',
                                                           fontSize: 22.0,
                                                         ),
                                                   );

@@ -106,7 +106,7 @@ class _SmsVerificationPageWidgetState extends State<SmsVerificationPageWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .headlineLarge
                                   .override(
-                                    fontFamily: 'Outfit',
+                                    fontFamily: 'Poppins',
                                     color: FlutterFlowTheme.of(context)
                                         .primaryBtnText,
                                   ),
@@ -124,7 +124,7 @@ class _SmsVerificationPageWidgetState extends State<SmsVerificationPageWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .headlineSmall
                                   .override(
-                                    fontFamily: 'Outfit',
+                                    fontFamily: 'Poppins',
                                     color: FlutterFlowTheme.of(context)
                                         .primaryBtnText,
                                   ),

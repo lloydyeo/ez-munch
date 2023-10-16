@@ -41,8 +41,12 @@ class _DownloadImageBtnState extends State<DownloadImageBtn> {
           _downloadFile(widget.imageUrl);
         },
         style: ElevatedButton.styleFrom(
-            backgroundColor: Color(
-                int.parse(hexColor.substring(1, 7), radix: 16) + 0xFF000000)),
+          backgroundColor: Color(
+              int.parse(hexColor.substring(1, 7), radix: 16) + 0xFF000000),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+        ),
         child: Text("Download QR Code",
             style: TextStyle(fontSize: 14, color: Colors.white)),
       ),

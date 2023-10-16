@@ -83,7 +83,7 @@ class _ThirdPartyPickupPageWidgetState
           title: Text(
             '3rd Party Vendor Pickup',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Outfit',
+                  fontFamily: 'Poppins',
                   color: Colors.white,
                   fontSize: 22.0,
                 ),
