@@ -1,6 +1,7 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
+import '/backend/push_notifications/push_notifications_util.dart';
 import '/components/postal_code_retrieval_dialog_widget.dart';
 import '/components/preparing_payment_dialog_widget.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
@@ -17,6 +18,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +27,8 @@ class CheckoutPageModel extends FlutterFlowModel<CheckoutPageWidget> {
   ///  Local state fields for this page.
 
   String? address = '';
+
+  bool hasUnavailableProducts = false;
 
   ///  State fields for stateful widgets in this page.
 
@@ -37,11 +41,14 @@ class CheckoutPageModel extends FlutterFlowModel<CheckoutPageWidget> {
   // Stores action output result for [Backend Call - API (getPostalCode)] action in PostalCodeRetrievalDialog widget.
   ApiCallResponse? postalCodeResponse;
   // State field(s) for TextField widget.
+  FocusNode? textFieldFocusNode1;
   TextEditingController? textController1;
   String? Function(BuildContext, String?)? textController1Validator;
   // State field(s) for TextField widget.
+  FocusNode? textFieldFocusNode2;
   TextEditingController? textController2;
   String? Function(BuildContext, String?)? textController2Validator;
+  ProductsRecord? basketItemProductsRecordPreviousSnapshot;
   // State field(s) for CutleryRequiredSwitch widget.
   bool? cutleryRequiredSwitchValue;
   // Stores action output result for [Backend Call - API (getOrderReferenceNumber)] action in Button widget.
@@ -59,7 +66,10 @@ class CheckoutPageModel extends FlutterFlowModel<CheckoutPageWidget> {
 
   void dispose() {
     unfocusNode.dispose();
+    textFieldFocusNode1?.dispose();
     textController1?.dispose();
+
+    textFieldFocusNode2?.dispose();
     textController2?.dispose();
   }
 

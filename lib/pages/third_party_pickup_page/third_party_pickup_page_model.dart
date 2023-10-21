@@ -12,6 +12,7 @@ import '/flutter_flow/random_data_util.dart' as random_data;
 import 'third_party_pickup_page_widget.dart' show ThirdPartyPickupPageWidget;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -22,12 +23,15 @@ class ThirdPartyPickupPageModel
 
   final unfocusNode = FocusNode();
   // State field(s) for StoreNameForm widget.
+  FocusNode? storeNameFormFocusNode;
   TextEditingController? storeNameFormController;
   String? Function(BuildContext, String?)? storeNameFormControllerValidator;
   // State field(s) for OrderNameForm widget.
+  FocusNode? orderNameFormFocusNode;
   TextEditingController? orderNameFormController;
   String? Function(BuildContext, String?)? orderNameFormControllerValidator;
   // State field(s) for OrderRefForm widget.
+  FocusNode? orderRefFormFocusNode;
   TextEditingController? orderRefFormController;
   String? Function(BuildContext, String?)? orderRefFormControllerValidator;
   // State field(s) for PickUpLeadTimeDropdown widget.
@@ -55,8 +59,13 @@ class ThirdPartyPickupPageModel
 
   void dispose() {
     unfocusNode.dispose();
+    storeNameFormFocusNode?.dispose();
     storeNameFormController?.dispose();
+
+    orderNameFormFocusNode?.dispose();
     orderNameFormController?.dispose();
+
+    orderRefFormFocusNode?.dispose();
     orderRefFormController?.dispose();
   }
 

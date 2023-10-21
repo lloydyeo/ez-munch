@@ -5,20 +5,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'preparing_payment_dialog_model.dart';
-export 'preparing_payment_dialog_model.dart';
+import 'postal_code_serving_dialog_model.dart';
+export 'postal_code_serving_dialog_model.dart';
 
-class PreparingPaymentDialogWidget extends StatefulWidget {
-  const PreparingPaymentDialogWidget({Key? key}) : super(key: key);
+class PostalCodeServingDialogWidget extends StatefulWidget {
+  const PostalCodeServingDialogWidget({Key? key}) : super(key: key);
 
   @override
-  _PreparingPaymentDialogWidgetState createState() =>
-      _PreparingPaymentDialogWidgetState();
+  _PostalCodeServingDialogWidgetState createState() =>
+      _PostalCodeServingDialogWidgetState();
 }
 
-class _PreparingPaymentDialogWidgetState
-    extends State<PreparingPaymentDialogWidget> {
-  late PreparingPaymentDialogModel _model;
+class _PostalCodeServingDialogWidgetState
+    extends State<PostalCodeServingDialogWidget> {
+  late PostalCodeServingDialogModel _model;
 
   @override
   void setState(VoidCallback callback) {
@@ -29,7 +29,7 @@ class _PreparingPaymentDialogWidgetState
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => PreparingPaymentDialogModel());
+    _model = createModel(context, () => PostalCodeServingDialogModel());
   }
 
   @override
@@ -54,17 +54,9 @@ class _PreparingPaymentDialogWidgetState
           ),
           decoration: BoxDecoration(
             color: FlutterFlowTheme.of(context).primary,
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 3.0,
-                color: Color(0x33000000),
-                offset: Offset(0.0, 1.0),
-              )
-            ],
-            borderRadius: BorderRadius.circular(12.0),
             border: Border.all(
-              color: Color(0xFFF5FBFB),
-              width: 1.0,
+              color: FlutterFlowTheme.of(context).primary,
+              width: 0.0,
             ),
           ),
           child: Align(
@@ -85,28 +77,15 @@ class _PreparingPaymentDialogWidgetState
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Align(
-                              alignment: AlignmentDirectional(0.00, 0.00),
-                              child: Text(
-                                'Thanks for ordering with us!',
-                                style: FlutterFlowTheme.of(context)
-                                    .titleMedium
-                                    .override(
-                                      fontFamily: 'Noto Sans',
-                                      fontSize: 15.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                            ),
                             Align(
                               alignment: AlignmentDirectional(0.00, 0.00),
                               child: Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 4.0, 0.0, 0.0),
+                                    0.0, 4.0, 0.0, 4.0),
                                 child: Text(
-                                  'Hang tight! One more step to completing your order!',
+                                  'We are currently only serving these postal codes:',
                                   textAlign: TextAlign.center,
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
@@ -115,9 +94,20 @@ class _PreparingPaymentDialogWidgetState
                                         color: FlutterFlowTheme.of(context)
                                             .primaryBtnText,
                                         fontSize: 14.0,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                 ),
                               ),
+                            ),
+                            Text(
+                              '- 521601 Block 601A\n- 522601 Block 601B\n- 523601 Block 601C\n- 524601 Block 601D\n\n- 521603 Block 603A\n\n- 521604 Block 604A\n- 522604 Block 604B\n\n- 521605 Block 605A\n- 522605 Block 605B\n- 523605 Block 605C\n- 524605 Block 605D \n\n- 521606 Block 606A \n- 522606 Block 606B\n- 523606 Block 606C\n- 524606 Block 606D',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    fontFamily: 'Noto Sans',
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryBtnText,
+                                  ),
                             ),
                           ],
                         ),

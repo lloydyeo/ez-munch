@@ -61,6 +61,11 @@ class ProductsRecord extends FirestoreRecord {
   DocumentReference? get vendor => _vendor;
   bool hasVendor() => _vendor != null;
 
+  // "status" field.
+  String? _status;
+  String get status => _status ?? '';
+  bool hasStatus() => _status != null;
+
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
     _description = snapshotData['description'] as String?;
@@ -71,6 +76,7 @@ class ProductsRecord extends FirestoreRecord {
     _updatedAt = snapshotData['updated_at'] as DateTime?;
     _coverImageUrl = snapshotData['cover_image_url'] as String?;
     _vendor = snapshotData['vendor'] as DocumentReference?;
+    _status = snapshotData['status'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -117,6 +123,7 @@ Map<String, dynamic> createProductsRecordData({
   DateTime? updatedAt,
   String? coverImageUrl,
   DocumentReference? vendor,
+  String? status,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -129,6 +136,7 @@ Map<String, dynamic> createProductsRecordData({
       'updated_at': updatedAt,
       'cover_image_url': coverImageUrl,
       'vendor': vendor,
+      'status': status,
     }.withoutNulls,
   );
 
@@ -148,7 +156,8 @@ class ProductsRecordDocumentEquality implements Equality<ProductsRecord> {
         e1?.createdAt == e2?.createdAt &&
         e1?.updatedAt == e2?.updatedAt &&
         e1?.coverImageUrl == e2?.coverImageUrl &&
-        e1?.vendor == e2?.vendor;
+        e1?.vendor == e2?.vendor &&
+        e1?.status == e2?.status;
   }
 
   @override
@@ -161,7 +170,8 @@ class ProductsRecordDocumentEquality implements Equality<ProductsRecord> {
         e?.createdAt,
         e?.updatedAt,
         e?.coverImageUrl,
-        e?.vendor
+        e?.vendor,
+        e?.status
       ]);
 
   @override

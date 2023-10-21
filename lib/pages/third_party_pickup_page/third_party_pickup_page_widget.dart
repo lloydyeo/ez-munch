@@ -11,6 +11,7 @@ import '/flutter_flow/upload_data.dart';
 import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -39,8 +40,11 @@ class _ThirdPartyPickupPageWidgetState
     logFirebaseEvent('screen_view',
         parameters: {'screen_name': 'ThirdPartyPickupPage'});
     _model.storeNameFormController ??= TextEditingController();
+    _model.storeNameFormFocusNode ??= FocusNode();
     _model.orderNameFormController ??= TextEditingController();
+    _model.orderNameFormFocusNode ??= FocusNode();
     _model.orderRefFormController ??= TextEditingController();
+    _model.orderRefFormFocusNode ??= FocusNode();
   }
 
   @override
@@ -52,6 +56,15 @@ class _ThirdPartyPickupPageWidgetState
 
   @override
   Widget build(BuildContext context) {
+    if (isiOS) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          statusBarBrightness: Theme.of(context).brightness,
+          systemStatusBarContrastEnforced: true,
+        ),
+      );
+    }
+
     context.watch<FFAppState>();
 
     return GestureDetector(
@@ -123,6 +136,7 @@ class _ThirdPartyPickupPageWidgetState
                           EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 10.0),
                       child: TextFormField(
                         controller: _model.storeNameFormController,
+                        focusNode: _model.storeNameFormFocusNode,
                         autofocus: true,
                         obscureText: false,
                         decoration: InputDecoration(
@@ -172,6 +186,7 @@ class _ThirdPartyPickupPageWidgetState
                           EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 10.0),
                       child: TextFormField(
                         controller: _model.orderNameFormController,
+                        focusNode: _model.orderNameFormFocusNode,
                         autofocus: true,
                         obscureText: false,
                         decoration: InputDecoration(
@@ -221,6 +236,7 @@ class _ThirdPartyPickupPageWidgetState
                           EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 10.0),
                       child: TextFormField(
                         controller: _model.orderRefFormController,
+                        focusNode: _model.orderRefFormFocusNode,
                         autofocus: true,
                         obscureText: false,
                         decoration: InputDecoration(

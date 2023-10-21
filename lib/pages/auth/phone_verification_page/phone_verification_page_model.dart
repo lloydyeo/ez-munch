@@ -8,6 +8,7 @@ import '/flutter_flow/random_data_util.dart' as random_data;
 import 'phone_verification_page_widget.dart' show PhoneVerificationPageWidget;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ class PhoneVerificationPageModel
 
   final unfocusNode = FocusNode();
   // State field(s) for PhoneNoText widget.
+  FocusNode? phoneNoTextFocusNode;
   TextEditingController? phoneNoTextController;
   String? Function(BuildContext, String?)? phoneNoTextControllerValidator;
   // Stores action output result for [Backend Call - Read Document] action in OTPBtn widget.
@@ -31,6 +33,7 @@ class PhoneVerificationPageModel
 
   void dispose() {
     unfocusNode.dispose();
+    phoneNoTextFocusNode?.dispose();
     phoneNoTextController?.dispose();
   }
 

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import '../../flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_util.dart';
 import 'api_manager.dart';
 
 export 'api_manager.dart' show ApiCallResponse;
@@ -12,7 +12,7 @@ class SendVerificationOTPSMSCall {
   static Future<ApiCallResponse> call({
     String? otp = '',
     String? mobileNumber = '',
-  }) {
+  }) async {
     final ffApiRequestBody = '''
 {
   "otp": "${otp}",
@@ -49,7 +49,7 @@ class SendVerificationOTPSMSCall {
 }
 
 class GetOrderReferenceNumberCall {
-  static Future<ApiCallResponse> call() {
+  static Future<ApiCallResponse> call() async {
     final ffApiRequestBody = '''
 {
   "TableName": "SystemKeys",
@@ -101,7 +101,7 @@ class GenerateQRCodeCall {
   static Future<ApiCallResponse> call({
     double? amount = 0.0,
     String? orderRefNo = 'TESTING',
-  }) {
+  }) async {
     final ffApiRequestBody = '''
 {
   "data": {
@@ -186,7 +186,7 @@ class SaveQRCodeCall {
   static Future<ApiCallResponse> call({
     String? orderRefNo = '',
     String? qrCodeImage = '',
-  }) {
+  }) async {
     final ffApiRequestBody = '''
 {
   "orderRefNo": "${orderRefNo}",
@@ -217,7 +217,7 @@ class SaveQRCodeCall {
 class SendReceiptEmailCall {
   static Future<ApiCallResponse> call({
     String? email = '',
-  }) {
+  }) async {
     return ApiManager.instance.makeApiCall(
       callName: 'sendReceiptEmail',
       apiUrl:
@@ -237,7 +237,7 @@ class SendReceiptEmailCall {
 class GetPostalCodeCall {
   static Future<ApiCallResponse> call({
     String? postalCode = '',
-  }) {
+  }) async {
     return ApiManager.instance.makeApiCall(
       callName: 'getPostalCode',
       apiUrl: 'https://onemap.sg/api/common/elastic/search',

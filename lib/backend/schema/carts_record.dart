@@ -81,15 +81,25 @@ class CartsRecord extends FirestoreRecord {
   List<DocumentReference> get vendors => _vendors ?? const [];
   bool hasVendors() => _vendors != null;
 
-  // "postal_code" field.
-  int? _postalCode;
-  int get postalCode => _postalCode ?? 0;
-  bool hasPostalCode() => _postalCode != null;
-
   // "street_name" field.
   String? _streetName;
   String get streetName => _streetName ?? '';
   bool hasStreetName() => _streetName != null;
+
+  // "floor" field.
+  String? _floor;
+  String get floor => _floor ?? '';
+  bool hasFloor() => _floor != null;
+
+  // "unit_no" field.
+  String? _unitNo;
+  String get unitNo => _unitNo ?? '';
+  bool hasUnitNo() => _unitNo != null;
+
+  // "postal_code" field.
+  String? _postalCode;
+  String get postalCode => _postalCode ?? '';
+  bool hasPostalCode() => _postalCode != null;
 
   void _initializeFields() {
     _user = snapshotData['user'] as DocumentReference?;
@@ -105,8 +115,10 @@ class CartsRecord extends FirestoreRecord {
     _fazzOrderId = snapshotData['fazz_order_id'] as String?;
     _items = getDataList(snapshotData['items']);
     _vendors = getDataList(snapshotData['vendors']);
-    _postalCode = castToType<int>(snapshotData['postal_code']);
     _streetName = snapshotData['street_name'] as String?;
+    _floor = snapshotData['floor'] as String?;
+    _unitNo = snapshotData['unit_no'] as String?;
+    _postalCode = snapshotData['postal_code'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -154,8 +166,10 @@ Map<String, dynamic> createCartsRecordData({
   DateTime? createdAt,
   DateTime? updatedAt,
   String? fazzOrderId,
-  int? postalCode,
   String? streetName,
+  String? floor,
+  String? unitNo,
+  String? postalCode,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -170,8 +184,10 @@ Map<String, dynamic> createCartsRecordData({
       'created_at': createdAt,
       'updated_at': updatedAt,
       'fazz_order_id': fazzOrderId,
-      'postal_code': postalCode,
       'street_name': streetName,
+      'floor': floor,
+      'unit_no': unitNo,
+      'postal_code': postalCode,
     }.withoutNulls,
   );
 
@@ -197,8 +213,10 @@ class CartsRecordDocumentEquality implements Equality<CartsRecord> {
         e1?.fazzOrderId == e2?.fazzOrderId &&
         listEquality.equals(e1?.items, e2?.items) &&
         listEquality.equals(e1?.vendors, e2?.vendors) &&
-        e1?.postalCode == e2?.postalCode &&
-        e1?.streetName == e2?.streetName;
+        e1?.streetName == e2?.streetName &&
+        e1?.floor == e2?.floor &&
+        e1?.unitNo == e2?.unitNo &&
+        e1?.postalCode == e2?.postalCode;
   }
 
   @override
@@ -216,8 +234,10 @@ class CartsRecordDocumentEquality implements Equality<CartsRecord> {
         e?.fazzOrderId,
         e?.items,
         e?.vendors,
-        e?.postalCode,
-        e?.streetName
+        e?.streetName,
+        e?.floor,
+        e?.unitNo,
+        e?.postalCode
       ]);
 
   @override

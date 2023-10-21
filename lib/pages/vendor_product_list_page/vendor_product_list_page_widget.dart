@@ -7,6 +7,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +51,15 @@ class _VendorProductListPageWidgetState
 
   @override
   Widget build(BuildContext context) {
+    if (isiOS) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          statusBarBrightness: Theme.of(context).brightness,
+          systemStatusBarContrastEnforced: true,
+        ),
+      );
+    }
+
     context.watch<FFAppState>();
 
     return StreamBuilder<VendorsRecord>(
@@ -299,336 +309,17 @@ class _VendorProductListPageWidgetState
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Builder(
-                                  builder: (context) {
-                                    final mallVendors =
-                                        vendorProductListPageVendorsRecord
-                                            .mallVendors
-                                            .toList();
-                                    return ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.vertical,
-                                      itemCount: mallVendors.length,
-                                      itemBuilder: (context, mallVendorsIndex) {
-                                        final mallVendorsItem =
-                                            mallVendors[mallVendorsIndex];
-                                        return StreamBuilder<VendorsRecord>(
-                                          stream: VendorsRecord.getDocument(
-                                              mallVendorsItem),
-                                          builder: (context, snapshot) {
-                                            // Customize what your widget looks like when it's loading.
-                                            if (!snapshot.hasData) {
-                                              return Center(
-                                                child: SizedBox(
-                                                  width: 50.0,
-                                                  height: 50.0,
-                                                  child: SpinKitThreeBounce(
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .primary,
-                                                    size: 50.0,
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                            final containerVendorsRecord =
-                                                snapshot.data!;
-                                            return Container(
-                                              width: 100.0,
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                              ),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(
-                                                                16.0,
-                                                                15.0,
-                                                                16.0,
-                                                                0.0),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          containerVendorsRecord
-                                                              .name,
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .titleLarge,
-                                                        ),
-                                                        FFButtonWidget(
-                                                          onPressed: () {
-                                                            print(
-                                                                'Button pressed ...');
-                                                          },
-                                                          text:
-                                                              'View Full Menu',
-                                                          options:
-                                                              FFButtonOptions(
-                                                            height: 20.0,
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                        24.0,
-                                                                        0.0,
-                                                                        0.0,
-                                                                        0.0),
-                                                            iconPadding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                        0.0,
-                                                                        0.0,
-                                                                        0.0,
-                                                                        0.0),
-                                                            color: Color(
-                                                                0x00EE7D31),
-                                                            textStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodySmall
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Noto Sans',
-                                                                      color: Color(
-                                                                          0xFF006DFF),
-                                                                    ),
-                                                            elevation: 0.0,
-                                                            borderSide:
-                                                                BorderSide(
-                                                              color: Colors
-                                                                  .transparent,
-                                                              width: 1.0,
-                                                            ),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8.0),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(0.0, 12.0,
-                                                                0.0, 0.0),
-                                                    child: StreamBuilder<
-                                                        List<ProductsRecord>>(
-                                                      stream:
-                                                          queryProductsRecord(
-                                                        queryBuilder:
-                                                            (productsRecord) =>
-                                                                productsRecord
-                                                                    .where(
-                                                          'vendor',
-                                                          isEqualTo:
-                                                              containerVendorsRecord
-                                                                  .reference,
-                                                        ),
-                                                      ),
-                                                      builder:
-                                                          (context, snapshot) {
-                                                        // Customize what your widget looks like when it's loading.
-                                                        if (!snapshot.hasData) {
-                                                          return Center(
-                                                            child: SizedBox(
-                                                              width: 50.0,
-                                                              height: 50.0,
-                                                              child:
-                                                                  SpinKitThreeBounce(
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .primary,
-                                                                size: 50.0,
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }
-                                                        List<ProductsRecord>
-                                                            listViewProductsRecordList =
-                                                            snapshot.data!;
-                                                        return ListView.builder(
-                                                          padding:
-                                                              EdgeInsets.zero,
-                                                          primary: false,
-                                                          shrinkWrap: true,
-                                                          scrollDirection:
-                                                              Axis.vertical,
-                                                          itemCount:
-                                                              listViewProductsRecordList
-                                                                  .length,
-                                                          itemBuilder: (context,
-                                                              listViewIndex) {
-                                                            final listViewProductsRecord =
-                                                                listViewProductsRecordList[
-                                                                    listViewIndex];
-                                                            return Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          16.0,
-                                                                          0.0,
-                                                                          16.0,
-                                                                          8.0),
-                                                              child: Container(
-                                                                width: double
-                                                                    .infinity,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .secondaryBackground,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0),
-                                                                ),
-                                                                child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                                                          8.0,
-                                                                          8.0,
-                                                                          8.0,
-                                                                          8.0),
-                                                                      child:
-                                                                          Row(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize.max,
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
-                                                                                0.0,
-                                                                                1.0,
-                                                                                1.0,
-                                                                                1.0),
-                                                                            child:
-                                                                                Hero(
-                                                                              tag: listViewProductsRecord.coverImageUrl,
-                                                                              transitionOnUserGestures: true,
-                                                                              child: ClipRRect(
-                                                                                borderRadius: BorderRadius.circular(6.0),
-                                                                                child: Image.network(
-                                                                                  listViewProductsRecord.coverImageUrl,
-                                                                                  width: 80.0,
-                                                                                  height: 80.0,
-                                                                                  fit: BoxFit.cover,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 4.0, 0.0),
-                                                                              child: Column(
-                                                                                mainAxisSize: MainAxisSize.max,
-                                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                children: [
-                                                                                  Text(
-                                                                                    listViewProductsRecord.name,
-                                                                                    style: FlutterFlowTheme.of(context).bodyMedium,
-                                                                                  ),
-                                                                                  Padding(
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 8.0, 0.0),
-                                                                                    child: AutoSizeText(
-                                                                                      formatNumber(
-                                                                                        listViewProductsRecord.price,
-                                                                                        formatType: FormatType.decimal,
-                                                                                        decimalType: DecimalType.automatic,
-                                                                                        currency: '',
-                                                                                      ).maybeHandleOverflow(
-                                                                                        maxChars: 70,
-                                                                                        replacement: '…',
-                                                                                      ),
-                                                                                      textAlign: TextAlign.start,
-                                                                                      style: FlutterFlowTheme.of(context).labelMedium.override(
-                                                                                            fontFamily: 'Noto Sans',
-                                                                                            fontWeight: FontWeight.w300,
-                                                                                          ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Column(
-                                                                            mainAxisSize:
-                                                                                MainAxisSize.max,
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.spaceBetween,
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.end,
-                                                                            children: [
-                                                                              Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
-                                                                                child: Icon(
-                                                                                  Icons.chevron_right_rounded,
-                                                                                  color: Color(0xFFEE7D31),
-                                                                                  size: 24.0,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                    Container(
-                                                                      width: MediaQuery.sizeOf(context)
-                                                                              .width *
-                                                                          0.9,
-                                                                      height:
-                                                                          1.0,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Color(
-                                                                            0xFFD3D3D3),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            );
-                                                          },
-                                                        );
-                                                      },
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
                                 StreamBuilder<List<ProductsRecord>>(
                                   stream: queryProductsRecord(
                                     queryBuilder: (productsRecord) =>
-                                        productsRecord.where(
-                                      'vendor',
-                                      isEqualTo:
-                                          vendorProductListPageVendorsRecord
-                                              .reference,
-                                    ),
+                                        productsRecord
+                                            .where(
+                                              'vendor',
+                                              isEqualTo:
+                                                  vendorProductListPageVendorsRecord
+                                                      .reference,
+                                            )
+                                            .orderBy('name'),
                                   ),
                                   builder: (context, snapshot) {
                                     // Customize what your widget looks like when it's loading.
@@ -670,31 +361,73 @@ class _VendorProductListPageWidgetState
                                             onTap: () async {
                                               logFirebaseEvent(
                                                   'VENDOR_PRODUCT_LIST_menuItem_ON_TAP');
-                                              logFirebaseEvent(
-                                                  'menuItem_navigate_to');
-
-                                              context.pushNamed(
-                                                'ProductDetailPage',
-                                                queryParameters: {
-                                                  'productReference':
-                                                      serializeParam(
-                                                    productListProductsRecord
-                                                        .reference,
-                                                    ParamType.DocumentReference,
-                                                  ),
-                                                }.withoutNulls,
-                                                extra: <String, dynamic>{
-                                                  kTransitionInfoKey:
-                                                      TransitionInfo(
-                                                    hasTransition: true,
-                                                    transitionType:
-                                                        PageTransitionType
-                                                            .rightToLeft,
+                                              if (productListProductsRecord
+                                                      .status ==
+                                                  'unavailable') {
+                                                logFirebaseEvent(
+                                                    'menuItem_show_snack_bar');
+                                                ScaffoldMessenger.of(context)
+                                                    .clearSnackBars();
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      'Sorry! This product is currently unavailable',
+                                                      style:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .titleSmall
+                                                              .override(
+                                                                fontFamily:
+                                                                    'Noto Sans',
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryBtnText,
+                                                                fontSize: 14.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                    ),
                                                     duration: Duration(
-                                                        milliseconds: 150),
+                                                        milliseconds: 1500),
+                                                    backgroundColor:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .primary,
                                                   ),
-                                                },
-                                              );
+                                                );
+                                                return;
+                                              } else {
+                                                logFirebaseEvent(
+                                                    'menuItem_navigate_to');
+
+                                                context.pushNamed(
+                                                  'ProductDetailPage',
+                                                  queryParameters: {
+                                                    'productReference':
+                                                        serializeParam(
+                                                      productListProductsRecord
+                                                          .reference,
+                                                      ParamType
+                                                          .DocumentReference,
+                                                    ),
+                                                  }.withoutNulls,
+                                                  extra: <String, dynamic>{
+                                                    kTransitionInfoKey:
+                                                        TransitionInfo(
+                                                      hasTransition: true,
+                                                      transitionType:
+                                                          PageTransitionType
+                                                              .rightToLeft,
+                                                      duration: Duration(
+                                                          milliseconds: 150),
+                                                    ),
+                                                  },
+                                                );
+
+                                                return;
+                                              }
                                             },
                                             child: Container(
                                               width: double.infinity,
@@ -817,6 +550,35 @@ class _VendorProductListPageWidgetState
                                                                         ),
                                                                   ),
                                                                 ),
+                                                                if (productListProductsRecord
+                                                                        .status ==
+                                                                    'unavailable')
+                                                                  Align(
+                                                                    alignment:
+                                                                        AlignmentDirectional(
+                                                                            -1.00,
+                                                                            1.00),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          0.0,
+                                                                          20.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                                      child:
+                                                                          Text(
+                                                                        'Currently unavailable',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .titleSmall
+                                                                            .override(
+                                                                              fontFamily: 'Noto Sans',
+                                                                              color: FlutterFlowTheme.of(context).secondaryText,
+                                                                              fontSize: 12.0,
+                                                                              fontWeight: FontWeight.w600,
+                                                                            ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
                                                               ],
                                                             ),
                                                           ),

@@ -1,6 +1,7 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
+import '/backend/push_notifications/push_notifications_util.dart';
 import '/components/postal_code_retrieval_dialog_widget.dart';
 import '/components/preparing_payment_dialog_widget.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
@@ -16,6 +17,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -51,7 +53,9 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
     });
 
     _model.textController1 ??= TextEditingController();
+    _model.textFieldFocusNode1 ??= FocusNode();
     _model.textController2 ??= TextEditingController();
+    _model.textFieldFocusNode2 ??= FocusNode();
   }
 
   @override
@@ -63,6 +67,15 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (isiOS) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          statusBarBrightness: Theme.of(context).brightness,
+          systemStatusBarContrastEnforced: true,
+        ),
+      );
+    }
+
     context.watch<FFAppState>();
 
     return StreamBuilder<CartsRecord>(
@@ -493,6 +506,8 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                                   TextFormField(
                                                                 controller: _model
                                                                     .textController1,
+                                                                focusNode: _model
+                                                                    .textFieldFocusNode1,
                                                                 autofocus: true,
                                                                 obscureText:
                                                                     false,
@@ -615,6 +630,8 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                                     TextFormField(
                                                                   controller: _model
                                                                       .textController2,
+                                                                  focusNode: _model
+                                                                      .textFieldFocusNode2,
                                                                   autofocus:
                                                                       true,
                                                                   obscureText:
@@ -811,263 +828,363 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                           padding:
                                               EdgeInsetsDirectional.fromSTEB(
                                                   0.0, 0.0, 0.0, 12.0),
-                                          child: Container(
-                                            width: MediaQuery.sizeOf(context)
-                                                    .width *
-                                                1.0,
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .secondaryBackground,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  blurRadius: 0.0,
+                                          child: StreamBuilder<ProductsRecord>(
+                                            stream: ProductsRecord.getDocument(
+                                                basketItemsListCartItemsRecord
+                                                    .product!)
+                                              ..listen(
+                                                  (basketItemProductsRecord) async {
+                                                if (_model.basketItemProductsRecordPreviousSnapshot !=
+                                                        null &&
+                                                    !ProductsRecordDocumentEquality().equals(
+                                                        basketItemProductsRecord,
+                                                        _model
+                                                            .basketItemProductsRecordPreviousSnapshot)) {
+                                                  logFirebaseEvent(
+                                                      'CHECKOUT_BasketItem_ON_DATA_CHANGE');
+                                                  if (basketItemProductsRecord
+                                                          .status ==
+                                                      'unavailable') {
+                                                    logFirebaseEvent(
+                                                        'BasketItem_update_page_state');
+                                                    setState(() {
+                                                      _model.hasUnavailableProducts =
+                                                          true;
+                                                    });
+                                                    logFirebaseEvent(
+                                                        'BasketItem_trigger_push_notification');
+                                                    triggerPushNotification(
+                                                      notificationTitle:
+                                                          'Item unavailable!',
+                                                      notificationText:
+                                                          '${basketItemProductsRecord.name} has gone out of stock',
+                                                      userRefs: [
+                                                        currentUserReference!
+                                                      ],
+                                                      initialPageName:
+                                                          'CheckoutPage',
+                                                      parameterData: {},
+                                                    );
+                                                    return;
+                                                  } else {
+                                                    return;
+                                                  }
+
+                                                  setState(() {});
+                                                }
+                                                _model.basketItemProductsRecordPreviousSnapshot =
+                                                    basketItemProductsRecord;
+                                              }),
+                                            builder: (context, snapshot) {
+                                              // Customize what your widget looks like when it's loading.
+                                              if (!snapshot.hasData) {
+                                                return Center(
+                                                  child: SizedBox(
+                                                    width: 50.0,
+                                                    height: 50.0,
+                                                    child: SpinKitThreeBounce(
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primary,
+                                                      size: 50.0,
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                              final basketItemProductsRecord =
+                                                  snapshot.data!;
+                                              return Container(
+                                                width:
+                                                    MediaQuery.sizeOf(context)
+                                                            .width *
+                                                        1.0,
+                                                decoration: BoxDecoration(
                                                   color: FlutterFlowTheme.of(
                                                           context)
-                                                      .alternate,
-                                                  offset: Offset(0.0, 1.0),
-                                                )
-                                              ],
-                                              borderRadius:
-                                                  BorderRadius.circular(0.0),
-                                            ),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
-                                                          0.0, 4.0, 0.0, 12.0),
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    children: [
-                                                      if (valueOrDefault<bool>(
-                                                        basketItemsListCartItemsRecord
-                                                                    .productImage !=
-                                                                null &&
+                                                      .secondaryBackground,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      blurRadius: 0.0,
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .alternate,
+                                                      offset: Offset(0.0, 1.0),
+                                                    )
+                                                  ],
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          0.0),
+                                                ),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  0.0,
+                                                                  4.0,
+                                                                  0.0,
+                                                                  12.0),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        children: [
+                                                          if (valueOrDefault<
+                                                              bool>(
                                                             basketItemsListCartItemsRecord
-                                                                    .productImage !=
-                                                                '',
-                                                        false,
-                                                      ))
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      0.0,
-                                                                      1.0,
-                                                                      8.0,
-                                                                      1.0),
-                                                          child: ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12.0),
-                                                            child:
-                                                                Image.network(
-                                                              basketItemsListCartItemsRecord
-                                                                  .productImage,
-                                                              width: 70.0,
-                                                              height: 70.0,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      Expanded(
-                                                        flex: 3,
-                                                        child: Padding(
-                                                          padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      0.0,
-                                                                      0.0,
-                                                                      4.0,
-                                                                      0.0),
-                                                          child: Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                '${valueOrDefault<String>(
+                                                                        .productImage !=
+                                                                    null &&
+                                                                basketItemsListCartItemsRecord
+                                                                        .productImage !=
+                                                                    '',
+                                                            false,
+                                                          ))
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0.0,
+                                                                          1.0,
+                                                                          8.0,
+                                                                          1.0),
+                                                              child: ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12.0),
+                                                                child: Image
+                                                                    .network(
                                                                   basketItemsListCartItemsRecord
-                                                                      .quantity
-                                                                      .toString(),
-                                                                  '1',
-                                                                )} x ${basketItemsListCartItemsRecord.name}',
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .start,
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .titleLarge
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Poppins',
-                                                                      fontSize:
-                                                                          14.0,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                    ),
+                                                                      .productImage,
+                                                                  width: 70.0,
+                                                                  height: 70.0,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                ),
                                                               ),
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsetsDirectional
+                                                            ),
+                                                          Expanded(
+                                                            flex: 3,
+                                                            child: Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0.0,
+                                                                          0.0,
+                                                                          4.0,
+                                                                          0.0),
+                                                              child: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    '${valueOrDefault<String>(
+                                                                      basketItemsListCartItemsRecord
+                                                                          .quantity
+                                                                          .toString(),
+                                                                      '1',
+                                                                    )} x ${basketItemsListCartItemsRecord.name}',
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .titleLarge
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Poppins',
+                                                                          fontSize:
+                                                                              14.0,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                        ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             1.0,
                                                                             0.0,
                                                                             0.0,
                                                                             0.0),
-                                                                child: Builder(
-                                                                  builder:
-                                                                      (context) {
-                                                                    final productOptionValues = basketItemsListCartItemsRecord
-                                                                        .productOptionValues
-                                                                        .map((e) =>
-                                                                            e)
-                                                                        .toList();
-                                                                    return Column(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .max,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: List.generate(
-                                                                          productOptionValues
-                                                                              .length,
-                                                                          (productOptionValuesIndex) {
-                                                                        final productOptionValuesItem =
-                                                                            productOptionValues[productOptionValuesIndex];
-                                                                        return Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(
-                                                                              0.0,
-                                                                              4.0,
-                                                                              8.0,
-                                                                              0.0),
-                                                                          child:
-                                                                              StreamBuilder<ProductOptionValuesRecord>(
-                                                                            stream:
-                                                                                ProductOptionValuesRecord.getDocument(productOptionValuesItem),
-                                                                            builder:
-                                                                                (context, snapshot) {
-                                                                              // Customize what your widget looks like when it's loading.
-                                                                              if (!snapshot.hasData) {
-                                                                                return Center(
-                                                                                  child: SizedBox(
-                                                                                    width: 50.0,
-                                                                                    height: 50.0,
-                                                                                    child: SpinKitThreeBounce(
-                                                                                      color: FlutterFlowTheme.of(context).primary,
-                                                                                      size: 50.0,
+                                                                    child:
+                                                                        Builder(
+                                                                      builder:
+                                                                          (context) {
+                                                                        final productOptionValues = basketItemsListCartItemsRecord
+                                                                            .productOptionValues
+                                                                            .map((e) =>
+                                                                                e)
+                                                                            .toList();
+                                                                        return Column(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.max,
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: List.generate(
+                                                                              productOptionValues.length,
+                                                                              (productOptionValuesIndex) {
+                                                                            final productOptionValuesItem =
+                                                                                productOptionValues[productOptionValuesIndex];
+                                                                            return Padding(
+                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 8.0, 0.0),
+                                                                              child: StreamBuilder<ProductOptionValuesRecord>(
+                                                                                stream: ProductOptionValuesRecord.getDocument(productOptionValuesItem),
+                                                                                builder: (context, snapshot) {
+                                                                                  // Customize what your widget looks like when it's loading.
+                                                                                  if (!snapshot.hasData) {
+                                                                                    return Center(
+                                                                                      child: SizedBox(
+                                                                                        width: 50.0,
+                                                                                        height: 50.0,
+                                                                                        child: SpinKitThreeBounce(
+                                                                                          color: FlutterFlowTheme.of(context).primary,
+                                                                                          size: 50.0,
+                                                                                        ),
+                                                                                      ),
+                                                                                    );
+                                                                                  }
+                                                                                  final textProductOptionValuesRecord = snapshot.data!;
+                                                                                  return AutoSizeText(
+                                                                                    '- ${textProductOptionValuesRecord.value}'.maybeHandleOverflow(
+                                                                                      maxChars: 70,
+                                                                                      replacement: '…',
                                                                                     ),
-                                                                                  ),
-                                                                                );
-                                                                              }
-                                                                              final textProductOptionValuesRecord = snapshot.data!;
-                                                                              return AutoSizeText(
-                                                                                '- ${textProductOptionValuesRecord.value}'.maybeHandleOverflow(
-                                                                                  maxChars: 70,
-                                                                                  replacement: '…',
-                                                                                ),
-                                                                                textAlign: TextAlign.start,
-                                                                                style: FlutterFlowTheme.of(context).labelMedium.override(
-                                                                                      fontFamily: 'Noto Sans',
-                                                                                      color: Colors.black,
-                                                                                      fontSize: 12.0,
-                                                                                    ),
-                                                                              );
-                                                                            },
-                                                                          ),
+                                                                                    textAlign: TextAlign.start,
+                                                                                    style: FlutterFlowTheme.of(context).labelMedium.override(
+                                                                                          fontFamily: 'Noto Sans',
+                                                                                          color: Colors.black,
+                                                                                          fontSize: 12.0,
+                                                                                        ),
+                                                                                  );
+                                                                                },
+                                                                              ),
+                                                                            );
+                                                                          }),
                                                                         );
-                                                                      }),
-                                                                    );
-                                                                  },
-                                                                ),
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                  if (basketItemProductsRecord
+                                                                          .status ==
+                                                                      'unavailable')
+                                                                    Padding(
+                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          0.0,
+                                                                          5.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                                      child:
+                                                                          Text(
+                                                                        'Unavailable now',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .titleMedium
+                                                                            .override(
+                                                                              fontFamily: 'Noto Sans',
+                                                                              color: FlutterFlowTheme.of(context).error,
+                                                                              fontSize: 12.0,
+                                                                              fontWeight: FontWeight.w600,
+                                                                            ),
+                                                                      ),
+                                                                    ),
+                                                                ],
                                                               ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    8.0,
-                                                                    0.0,
-                                                                    15.0,
-                                                                    0.0),
-                                                        child: Text(
-                                                          valueOrDefault<
-                                                              String>(
-                                                            formatNumber(
-                                                              basketItemsListCartItemsRecord
-                                                                  .price,
-                                                              formatType:
-                                                                  FormatType
-                                                                      .decimal,
-                                                              decimalType:
-                                                                  DecimalType
-                                                                      .automatic,
-                                                              currency: '',
                                                             ),
-                                                            '\$0',
                                                           ),
-                                                          textAlign:
-                                                              TextAlign.end,
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .titleLarge
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Poppins',
-                                                                fontSize: 14.0,
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        8.0,
+                                                                        0.0,
+                                                                        15.0,
+                                                                        0.0),
+                                                            child: Text(
+                                                              valueOrDefault<
+                                                                  String>(
+                                                                formatNumber(
+                                                                  basketItemsListCartItemsRecord
+                                                                      .price,
+                                                                  formatType:
+                                                                      FormatType
+                                                                          .decimal,
+                                                                  decimalType:
+                                                                      DecimalType
+                                                                          .automatic,
+                                                                  currency: '',
+                                                                ),
+                                                                '\$0',
                                                               ),
-                                                        ),
-                                                      ),
-                                                      FlutterFlowIconButton(
-                                                        borderColor:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
+                                                              textAlign:
+                                                                  TextAlign.end,
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .titleLarge
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'Poppins',
+                                                                    fontSize:
+                                                                        14.0,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          FlutterFlowIconButton(
+                                                            borderColor:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryBtnText,
+                                                            borderRadius: 0.0,
+                                                            borderWidth: 0.0,
+                                                            buttonSize: 40.0,
+                                                            fillColor: FlutterFlowTheme
+                                                                    .of(context)
                                                                 .primaryBtnText,
-                                                        borderRadius: 0.0,
-                                                        borderWidth: 0.0,
-                                                        buttonSize: 40.0,
-                                                        fillColor:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .primaryBtnText,
-                                                        icon: Icon(
-                                                          Icons.delete_outline,
-                                                          color:
-                                                              Color(0xFFEE3131),
-                                                          size: 20.0,
-                                                        ),
-                                                        onPressed: () async {
-                                                          logFirebaseEvent(
-                                                              'CHECKOUT_delete_outline_ICN_ON_TAP');
-                                                          logFirebaseEvent(
-                                                              'IconButton_backend_call');
-                                                          await basketItemsListCartItemsRecord
-                                                              .reference
-                                                              .delete();
-                                                        },
+                                                            icon: Icon(
+                                                              Icons
+                                                                  .delete_outline,
+                                                              color: Color(
+                                                                  0xFFEE3131),
+                                                              size: 20.0,
+                                                            ),
+                                                            onPressed:
+                                                                () async {
+                                                              logFirebaseEvent(
+                                                                  'CHECKOUT_delete_outline_ICN_ON_TAP');
+                                                              logFirebaseEvent(
+                                                                  'IconButton_backend_call');
+                                                              await basketItemsListCartItemsRecord
+                                                                  .reference
+                                                                  .delete();
+                                                              logFirebaseEvent(
+                                                                  'IconButton_update_app_state');
+                                                              setState(() {
+                                                                FFAppState()
+                                                                        .numCartItems =
+                                                                    FFAppState()
+                                                                            .numCartItems +
+                                                                        -1;
+                                                              });
+                                                            },
+                                                          ),
+                                                        ],
                                                       ),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
+                                              );
+                                            },
                                           ),
                                         );
                                       }),
@@ -1381,6 +1498,15 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                           await pickupItemsListCartItemsRecord
                                                               .reference
                                                               .delete();
+                                                          logFirebaseEvent(
+                                                              'IconButton_update_app_state');
+                                                          setState(() {
+                                                            FFAppState()
+                                                                    .numCartItems =
+                                                                FFAppState()
+                                                                        .numCartItems +
+                                                                    -1;
+                                                          });
                                                         },
                                                       ),
                                                     ],
@@ -1848,6 +1974,51 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                   logFirebaseEvent(
                                       'CHECKOUT_PLACE_ORDER_BTN_ON_TAP');
                                   var _shouldSetState = false;
+                                  logFirebaseEvent('Button_show_snack_bar');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        _model.hasUnavailableProducts
+                                            .toString(),
+                                        style: TextStyle(
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryBtnText,
+                                        ),
+                                      ),
+                                      duration: Duration(milliseconds: 4000),
+                                      backgroundColor:
+                                          FlutterFlowTheme.of(context)
+                                              .secondary,
+                                    ),
+                                  );
+                                  if (_model.hasUnavailableProducts == true) {
+                                    logFirebaseEvent('Button_show_snack_bar');
+                                    ScaffoldMessenger.of(context)
+                                        .clearSnackBars();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Sorry! Some products have become unavailable in your cart',
+                                          style: FlutterFlowTheme.of(context)
+                                              .titleSmall
+                                              .override(
+                                                fontFamily: 'Noto Sans',
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryText,
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                        duration: Duration(milliseconds: 1500),
+                                        backgroundColor:
+                                            FlutterFlowTheme.of(context)
+                                                .primary,
+                                      ),
+                                    );
+                                    if (_shouldSetState) setState(() {});
+                                    return;
+                                  }
                                   logFirebaseEvent('Button_alert_dialog');
                                   showAlignedDialog(
                                     context: context,
@@ -1980,6 +2151,10 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                           (_model.qrCodeApiResponse?.jsonBody ??
                                               ''),
                                         ).toString(),
+                                        postalCode: _model
+                                            .postalCodeRetrievalDialogValue,
+                                        floor: _model.textController1.text,
+                                        unitNo: _model.textController2.text,
                                       ));
                                       logFirebaseEvent('Button_navigate_to');
 

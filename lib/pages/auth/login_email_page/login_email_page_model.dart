@@ -4,6 +4,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'login_email_page_widget.dart' show LoginEmailPageWidget;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -13,9 +14,11 @@ class LoginEmailPageModel extends FlutterFlowModel<LoginEmailPageWidget> {
 
   final unfocusNode = FocusNode();
   // State field(s) for EmailField widget.
+  FocusNode? emailFieldFocusNode1;
   TextEditingController? emailFieldController1;
   String? Function(BuildContext, String?)? emailFieldController1Validator;
   // State field(s) for EmailField widget.
+  FocusNode? emailFieldFocusNode2;
   TextEditingController? emailFieldController2;
   late bool emailFieldVisibility;
   String? Function(BuildContext, String?)? emailFieldController2Validator;
@@ -28,7 +31,10 @@ class LoginEmailPageModel extends FlutterFlowModel<LoginEmailPageWidget> {
 
   void dispose() {
     unfocusNode.dispose();
+    emailFieldFocusNode1?.dispose();
     emailFieldController1?.dispose();
+
+    emailFieldFocusNode2?.dispose();
     emailFieldController2?.dispose();
   }
 

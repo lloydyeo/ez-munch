@@ -51,6 +51,11 @@ class VendorsRecord extends FirestoreRecord {
   String get name => _name ?? '';
   bool hasName() => _name != null;
 
+  // "qr_code_url" field.
+  String? _qrCodeUrl;
+  String get qrCodeUrl => _qrCodeUrl ?? '';
+  bool hasQrCodeUrl() => _qrCodeUrl != null;
+
   void _initializeFields() {
     _userEmail = snapshotData['user_email'] as String?;
     _coverImageUrl = snapshotData['cover_image_url'] as String?;
@@ -59,6 +64,7 @@ class VendorsRecord extends FirestoreRecord {
     _isThirdParty = snapshotData['is_third_party'] as bool?;
     _address = snapshotData['address'] as String?;
     _name = snapshotData['name'] as String?;
+    _qrCodeUrl = snapshotData['qr_code_url'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -102,6 +108,7 @@ Map<String, dynamic> createVendorsRecordData({
   bool? isThirdParty,
   String? address,
   String? name,
+  String? qrCodeUrl,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -111,6 +118,7 @@ Map<String, dynamic> createVendorsRecordData({
       'is_third_party': isThirdParty,
       'address': address,
       'name': name,
+      'qr_code_url': qrCodeUrl,
     }.withoutNulls,
   );
 
@@ -129,7 +137,8 @@ class VendorsRecordDocumentEquality implements Equality<VendorsRecord> {
         e1?.isMall == e2?.isMall &&
         e1?.isThirdParty == e2?.isThirdParty &&
         e1?.address == e2?.address &&
-        e1?.name == e2?.name;
+        e1?.name == e2?.name &&
+        e1?.qrCodeUrl == e2?.qrCodeUrl;
   }
 
   @override
@@ -140,7 +149,8 @@ class VendorsRecordDocumentEquality implements Equality<VendorsRecord> {
         e?.isMall,
         e?.isThirdParty,
         e?.address,
-        e?.name
+        e?.name,
+        e?.qrCodeUrl
       ]);
 
   @override

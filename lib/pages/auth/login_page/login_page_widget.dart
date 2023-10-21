@@ -3,6 +3,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -39,6 +40,15 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (isiOS) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          statusBarBrightness: Theme.of(context).brightness,
+          systemStatusBarContrastEnforced: true,
+        ),
+      );
+    }
+
     context.watch<FFAppState>();
 
     return GestureDetector(
@@ -202,6 +212,56 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                           ),
                         ),
                       ),
+                      isAndroid
+                          ? Container()
+                          : Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 16.0),
+                              child: FFButtonWidget(
+                                onPressed: () async {
+                                  logFirebaseEvent(
+                                      'LOGIN_PAGE_PAGE_AppleSignupBtn_ON_TAP');
+                                  logFirebaseEvent('AppleSignupBtn_auth');
+                                  GoRouter.of(context).prepareAuthEvent();
+                                  final user = await authManager
+                                      .signInWithApple(context);
+                                  if (user == null) {
+                                    return;
+                                  }
+
+                                  context.goNamedAuth(
+                                      'ListVendorPage', context.mounted);
+                                },
+                                text: 'Continue with Apple',
+                                icon: Icon(
+                                  Icons.apple,
+                                  size: 25.0,
+                                ),
+                                options: FFButtonOptions(
+                                  width: MediaQuery.sizeOf(context).width * 0.8,
+                                  height: 44.0,
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 0.0, 0.0, 0.0),
+                                  iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 0.0, 0.0, 0.0),
+                                  color: FlutterFlowTheme.of(context).primary,
+                                  textStyle: FlutterFlowTheme.of(context)
+                                      .titleSmall
+                                      .override(
+                                        fontFamily: 'Noto Sans',
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryBtnText,
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                  elevation: 4.0,
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).primary,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
                       Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),

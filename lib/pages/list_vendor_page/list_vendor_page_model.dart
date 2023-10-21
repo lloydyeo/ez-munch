@@ -1,5 +1,6 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/components/postal_code_serving_dialog_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -7,10 +8,15 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/random_data_util.dart' as random_data;
 import 'list_vendor_page_widget.dart' show ListVendorPageWidget;
 import 'package:badges/badges.dart' as badges;
+import 'package:smooth_page_indicator/smooth_page_indicator.dart'
+    as smooth_page_indicator;
+import 'package:aligned_dialog/aligned_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -27,6 +33,7 @@ class ListVendorPageModel extends FlutterFlowModel<ListVendorPageWidget> {
   // Stores action output result for [Backend Call - Read Document] action in ListVendorPage widget.
   CartsRecord? currentCart;
   // State field(s) for TextField widget.
+  FocusNode? textFieldFocusNode;
   TextEditingController? textController;
   String? Function(BuildContext, String?)? textControllerValidator;
   // State field(s) for TabBar widget.
@@ -41,13 +48,24 @@ class ListVendorPageModel extends FlutterFlowModel<ListVendorPageWidget> {
   Query? listVendorViewPagingQuery;
   List<StreamSubscription?> listVendorViewStreamSubscriptions = [];
 
+  // State field(s) for PageView widget.
+  PageController? pageViewController;
+
+  int get pageViewCurrentIndex => pageViewController != null &&
+          pageViewController!.hasClients &&
+          pageViewController!.page != null
+      ? pageViewController!.page!.round()
+      : 0;
+
   /// Initialization and disposal methods.
 
   void initState(BuildContext context) {}
 
   void dispose() {
     unfocusNode.dispose();
+    textFieldFocusNode?.dispose();
     textController?.dispose();
+
     tabBarController?.dispose();
     listVendorViewStreamSubscriptions.forEach((s) => s?.cancel());
     listVendorViewPagingController?.dispose();

@@ -8,6 +8,7 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +51,15 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (isiOS) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          statusBarBrightness: Theme.of(context).brightness,
+          systemStatusBarContrastEnforced: true,
+        ),
+      );
+    }
+
     context.watch<FFAppState>();
 
     return StreamBuilder<ProductsRecord>(
@@ -272,7 +282,7 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                                                   (productOptionValuesRecord) =>
                                                       productOptionValuesRecord
                                                           .where(
-                                                'product_option',
+                                                'productOption',
                                                 isEqualTo:
                                                     productOptionColProductOptionsRecord
                                                         .reference,
@@ -368,47 +378,13 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                                                                           .perUnitPrice +
                                                                       valueOrDefault<
                                                                           double>(
-                                                                        optionValuesColProductOptionValuesRecord.hasValue()
+                                                                        optionValuesColProductOptionValuesRecord.addOnPrice !=
+                                                                                null
                                                                             ? optionValuesColProductOptionValuesRecord.addOnPrice
                                                                             : 0.0,
                                                                         0.0,
                                                                       );
                                                                 });
-                                                                logFirebaseEvent(
-                                                                    'Checkbox_show_snack_bar');
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(
-                                                                  SnackBar(
-                                                                    content:
-                                                                        Text(
-                                                                      'perUnitPrice (${valueOrDefault<String>(
-                                                                        formatNumber(
-                                                                          _model
-                                                                              .perUnitPrice,
-                                                                          formatType:
-                                                                              FormatType.decimal,
-                                                                          decimalType:
-                                                                              DecimalType.automatic,
-                                                                          currency:
-                                                                              '',
-                                                                        ),
-                                                                        '0',
-                                                                      )})',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primaryText,
-                                                                      ),
-                                                                    ),
-                                                                    duration: Duration(
-                                                                        milliseconds:
-                                                                            4000),
-                                                                    backgroundColor:
-                                                                        FlutterFlowTheme.of(context)
-                                                                            .secondary,
-                                                                  ),
-                                                                );
                                                               }
                                                             },
                                                             activeColor:

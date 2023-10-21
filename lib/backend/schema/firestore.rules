@@ -11,57 +11,69 @@ service cloud.firestore {
     match /vendors/{document} {
       allow create: if true;
       allow read: if true;
-      allow write: if true;
-      allow delete: if true;
+      allow write: if false;
+      allow delete: if false;
     }
 
     match /carts/{document} {
       allow create: if true;
       allow read: if true;
-      allow write: if true;
-      allow delete: if true;
+      allow write: if false;
+      allow delete: if false;
     }
 
     match /cart_items/{document} {
       allow create: if true;
       allow read: if true;
-      allow write: if true;
-      allow delete: if true;
+      allow write: if false;
+      allow delete: if false;
     }
 
     match /products/{document} {
       allow create: if true;
       allow read: if true;
-      allow write: if true;
-      allow delete: if true;
+      allow write: if false;
+      allow delete: if false;
     }
 
     match /product_options/{document} {
       allow create: if true;
       allow read: if true;
-      allow write: if true;
-      allow delete: if true;
+      allow write: if false;
+      allow delete: if false;
     }
 
     match /product_option_values/{document} {
       allow create: if true;
       allow read: if true;
-      allow write: if true;
-      allow delete: if true;
+      allow write: if false;
+      allow delete: if false;
     }
 
     match /api_logs/{document} {
       allow create: if true;
       allow read: if true;
-      allow write: if true;
-      allow delete: if true;
+      allow write: if false;
+      allow delete: if false;
     }
 
     match /postal_codes/{document} {
       allow create: if true;
       allow read: if true;
-      allow write: if true;
-      allow delete: if true;
+      allow write: if false;
+      allow delete: if false;
+    }
+
+    match /configs/{document} {
+      allow create: if true;
+      allow read: if true;
+      allow write: if false;
+      allow delete: if false;
+    }
+
+    match /ff_user_push_notifications/{id} {
+      allow read, update, delete: if false;
+      allow create: if /databases/$(database)/documents/users/$(request.auth.uid) == request.resource.data.sender;
     }
   }
 }

@@ -16,25 +16,25 @@ class ProductOptionValuesRecord extends FirestoreRecord {
     _initializeFields();
   }
 
-  // "product_option" field.
-  DocumentReference? _productOption;
-  DocumentReference? get productOption => _productOption;
-  bool hasProductOption() => _productOption != null;
-
   // "value" field.
   String? _value;
   String get value => _value ?? '';
   bool hasValue() => _value != null;
 
-  // "add_on_price" field.
+  // "productOption" field.
+  DocumentReference? _productOption;
+  DocumentReference? get productOption => _productOption;
+  bool hasProductOption() => _productOption != null;
+
+  // "addOnPrice" field.
   double? _addOnPrice;
   double get addOnPrice => _addOnPrice ?? 0.0;
   bool hasAddOnPrice() => _addOnPrice != null;
 
   void _initializeFields() {
-    _productOption = snapshotData['product_option'] as DocumentReference?;
     _value = snapshotData['value'] as String?;
-    _addOnPrice = castToType<double>(snapshotData['add_on_price']);
+    _productOption = snapshotData['productOption'] as DocumentReference?;
+    _addOnPrice = castToType<double>(snapshotData['addOnPrice']);
   }
 
   static CollectionReference get collection =>
@@ -73,15 +73,15 @@ class ProductOptionValuesRecord extends FirestoreRecord {
 }
 
 Map<String, dynamic> createProductOptionValuesRecordData({
-  DocumentReference? productOption,
   String? value,
+  DocumentReference? productOption,
   double? addOnPrice,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
-      'product_option': productOption,
       'value': value,
-      'add_on_price': addOnPrice,
+      'productOption': productOption,
+      'addOnPrice': addOnPrice,
     }.withoutNulls,
   );
 
@@ -94,14 +94,14 @@ class ProductOptionValuesRecordDocumentEquality
 
   @override
   bool equals(ProductOptionValuesRecord? e1, ProductOptionValuesRecord? e2) {
-    return e1?.productOption == e2?.productOption &&
-        e1?.value == e2?.value &&
+    return e1?.value == e2?.value &&
+        e1?.productOption == e2?.productOption &&
         e1?.addOnPrice == e2?.addOnPrice;
   }
 
   @override
   int hash(ProductOptionValuesRecord? e) =>
-      const ListEquality().hash([e?.productOption, e?.value, e?.addOnPrice]);
+      const ListEquality().hash([e?.value, e?.productOption, e?.addOnPrice]);
 
   @override
   bool isValidKey(Object? o) => o is ProductOptionValuesRecord;
