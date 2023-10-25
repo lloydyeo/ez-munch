@@ -1,4 +1,5 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_count_controller.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -44,6 +45,8 @@ class ProductDetailPageModel extends FlutterFlowModel<ProductDetailPageWidget> {
 
   // State field(s) for QuantityController widget.
   int? quantityControllerValue;
+  // Stores action output result for [Backend Call - API (validateCartItem)] action in AddToCartBtn widget.
+  ApiCallResponse? validateCartItemResponse;
   // Stores action output result for [Backend Call - Read Document] action in AddToCartBtn widget.
   CartsRecord? existingCart;
   // Stores action output result for [Backend Call - Create Document] action in AddToCartBtn widget.

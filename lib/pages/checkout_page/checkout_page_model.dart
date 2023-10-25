@@ -49,6 +49,8 @@ class CheckoutPageModel extends FlutterFlowModel<CheckoutPageWidget> {
   TextEditingController? textController2;
   String? Function(BuildContext, String?)? textController2Validator;
   ProductsRecord? basketItemProductsRecordPreviousSnapshot;
+  // Stores action output result for [Backend Call - Read Document] action in IconButton widget.
+  CartsRecord? cartForDeletedItem;
   // State field(s) for CutleryRequiredSwitch widget.
   bool? cutleryRequiredSwitchValue;
   // Stores action output result for [Backend Call - API (getOrderReferenceNumber)] action in Button widget.

@@ -279,6 +279,40 @@ class GetPostalCodeCall {
       );
 }
 
+class ValidateCartItemCall {
+  static Future<ApiCallResponse> call({
+    List<String>? productOptionValuesList,
+    String? product = '',
+  }) async {
+    final productOptionValues = _serializeList(productOptionValuesList);
+
+    final ffApiRequestBody = '''
+{
+  "product": "${product}",
+  "product_option_values": ${productOptionValues}
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'validateCartItem',
+      apiUrl:
+          'https://crv397t85i.execute-api.ap-southeast-1.amazonaws.com/production',
+      callType: ApiCallType.POST,
+      headers: {},
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+    );
+  }
+
+  static dynamic success(dynamic response) => getJsonField(
+        response,
+        r'''$.body.success''',
+      );
+}
+
 class ApiPagingParams {
   int nextPageNumber = 0;
   int numItems = 0;

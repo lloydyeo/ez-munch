@@ -1,8 +1,10 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -189,6 +191,12 @@ class _SmsVerificationPageWidgetState extends State<SmsVerificationPageWidget> {
                             if (_model.pinCodeController!.text ==
                                 valueOrDefault(
                                     currentUserDocument?.phoneOtp, '')) {
+                              logFirebaseEvent('PinCode_backend_call');
+
+                              await currentUserReference!
+                                  .update(createUsersRecordData(
+                                phoneVerified: true,
+                              ));
                               logFirebaseEvent('PinCode_navigate_to');
 
                               context.pushNamed('ListVendorPage');

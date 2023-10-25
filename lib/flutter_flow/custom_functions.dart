@@ -19,3 +19,12 @@ double sumCartItemPrice(List<CartItemsRecord> cartItems) {
 
   return price;
 }
+
+double? sumDouble(
+  double doubleA,
+  double doubleB,
+) {
+  double c = doubleA + doubleB;
+
+  return double.parse(c.toStringAsFixed(2));
+}

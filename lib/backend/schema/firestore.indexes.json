@@ -1,15 +1,51 @@
 {
   "indexes": [
     {
-      "collectionGroup": "products",
+      "collectionGroup": "vendors",
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "vendor",
+          "fieldPath": "is_mall",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "is_third_party",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
           "order": "ASCENDING"
         },
         {
           "fieldPath": "name",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "product_options",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "product",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "name",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "product_option_values",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "productOption",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "value",
           "order": "ASCENDING"
         }
       ]

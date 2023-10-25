@@ -46,7 +46,8 @@ class _ListVendorPageWidgetState extends State<ListVendorPageWidget>
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       logFirebaseEvent('LIST_VENDOR_ListVendorPage_ON_INIT_STATE');
-      if (currentPhoneNumber != null && currentPhoneNumber != '') {
+      if (valueOrDefault<bool>(currentUserDocument?.phoneVerified, false) ==
+          true) {
         logFirebaseEvent('ListVendorPage_alert_dialog');
         showAlignedDialog(
           context: context,
@@ -695,7 +696,12 @@ class _ListVendorPageWidgetState extends State<ListVendorPageWidget>
                                         .where(
                                           'is_third_party',
                                           isEqualTo: false,
-                                        ),
+                                        )
+                                        .where(
+                                          'status',
+                                          isEqualTo: 'available',
+                                        )
+                                        .orderBy('name'),
                                   ),
                                   padding: EdgeInsets.zero,
                                   reverse: false,

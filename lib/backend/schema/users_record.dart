@@ -51,6 +51,11 @@ class UsersRecord extends FirestoreRecord {
   String get phoneOtp => _phoneOtp ?? '';
   bool hasPhoneOtp() => _phoneOtp != null;
 
+  // "phone_verified" field.
+  bool? _phoneVerified;
+  bool get phoneVerified => _phoneVerified ?? false;
+  bool hasPhoneVerified() => _phoneVerified != null;
+
   void _initializeFields() {
     _email = snapshotData['email'] as String?;
     _displayName = snapshotData['display_name'] as String?;
@@ -59,6 +64,7 @@ class UsersRecord extends FirestoreRecord {
     _createdTime = snapshotData['created_time'] as DateTime?;
     _phoneNumber = snapshotData['phone_number'] as String?;
     _phoneOtp = snapshotData['phone_otp'] as String?;
+    _phoneVerified = snapshotData['phone_verified'] as bool?;
   }
 
   static CollectionReference get collection =>
@@ -102,6 +108,7 @@ Map<String, dynamic> createUsersRecordData({
   DateTime? createdTime,
   String? phoneNumber,
   String? phoneOtp,
+  bool? phoneVerified,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -112,6 +119,7 @@ Map<String, dynamic> createUsersRecordData({
       'created_time': createdTime,
       'phone_number': phoneNumber,
       'phone_otp': phoneOtp,
+      'phone_verified': phoneVerified,
     }.withoutNulls,
   );
 
@@ -129,7 +137,8 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e1?.uid == e2?.uid &&
         e1?.createdTime == e2?.createdTime &&
         e1?.phoneNumber == e2?.phoneNumber &&
-        e1?.phoneOtp == e2?.phoneOtp;
+        e1?.phoneOtp == e2?.phoneOtp &&
+        e1?.phoneVerified == e2?.phoneVerified;
   }
 
   @override
@@ -140,7 +149,8 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e?.uid,
         e?.createdTime,
         e?.phoneNumber,
-        e?.phoneOtp
+        e?.phoneOtp,
+        e?.phoneVerified
       ]);
 
   @override

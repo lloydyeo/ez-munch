@@ -1164,6 +1164,31 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                                   'CHECKOUT_delete_outline_ICN_ON_TAP');
                                                               logFirebaseEvent(
                                                                   'IconButton_backend_call');
+                                                              _model.cartForDeletedItem =
+                                                                  await CartsRecord
+                                                                      .getDocumentOnce(
+                                                                          checkoutPageCartsRecord
+                                                                              .reference);
+                                                              logFirebaseEvent(
+                                                                  'IconButton_backend_call');
+
+                                                              await _model
+                                                                  .cartForDeletedItem!
+                                                                  .reference
+                                                                  .update({
+                                                                ...mapToFirestore(
+                                                                  {
+                                                                    'items':
+                                                                        FieldValue
+                                                                            .arrayRemove([
+                                                                      basketItemsListCartItemsRecord
+                                                                          .reference
+                                                                    ]),
+                                                                  },
+                                                                ),
+                                                              });
+                                                              logFirebaseEvent(
+                                                                  'IconButton_backend_call');
                                                               await basketItemsListCartItemsRecord
                                                                   .reference
                                                                   .delete();
@@ -1176,6 +1201,8 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                                             .numCartItems +
                                                                         -1;
                                                               });
+
+                                                              setState(() {});
                                                             },
                                                           ),
                                                         ],
@@ -1974,23 +2001,6 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                   logFirebaseEvent(
                                       'CHECKOUT_PLACE_ORDER_BTN_ON_TAP');
                                   var _shouldSetState = false;
-                                  logFirebaseEvent('Button_show_snack_bar');
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        _model.hasUnavailableProducts
-                                            .toString(),
-                                        style: TextStyle(
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryBtnText,
-                                        ),
-                                      ),
-                                      duration: Duration(milliseconds: 4000),
-                                      backgroundColor:
-                                          FlutterFlowTheme.of(context)
-                                              .secondary,
-                                    ),
-                                  );
                                   if (_model.hasUnavailableProducts == true) {
                                     logFirebaseEvent('Button_show_snack_bar');
                                     ScaffoldMessenger.of(context)
@@ -2005,7 +2015,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                 fontFamily: 'Noto Sans',
                                                 color:
                                                     FlutterFlowTheme.of(context)
-                                                        .primaryText,
+                                                        .primaryBtnText,
                                                 fontSize: 14.0,
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -2077,8 +2087,15 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                   _model.qrCodeApiResponse =
                                       await GenerateQRCodeCall.call(
                                     amount: valueOrDefault<double>(
-                                      0.20,
-                                      2.80,
+                                      functions.sumDouble(
+                                          valueOrDefault<double>(
+                                            functions.sumCartItemPrice(
+                                                buttonCartItemsRecordList
+                                                    .toList()),
+                                            0.0,
+                                          ),
+                                          2.8),
+                                      2.8,
                                     ),
                                     orderRefNo: _model.updatedCart?.orderRefNo,
                                   );
@@ -2179,7 +2196,7 @@ class _CheckoutPageWidgetState extends State<CheckoutPageWidget> {
                                                 .primaryBtnText,
                                           ),
                                         ),
-                                        duration: Duration(milliseconds: 4050),
+                                        duration: Duration(milliseconds: 1500),
                                         backgroundColor: Color(0xFFEE7D31),
                                       ),
                                     );

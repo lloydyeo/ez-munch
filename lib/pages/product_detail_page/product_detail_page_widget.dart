@@ -1,4 +1,5 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_count_controller.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -209,11 +210,14 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                             StreamBuilder<List<ProductOptionsRecord>>(
                               stream: queryProductOptionsRecord(
                                 queryBuilder: (productOptionsRecord) =>
-                                    productOptionsRecord.where(
-                                  'product',
-                                  isEqualTo:
-                                      productDetailPageProductsRecord.reference,
-                                ),
+                                    productOptionsRecord
+                                        .where(
+                                          'product',
+                                          isEqualTo:
+                                              productDetailPageProductsRecord
+                                                  .reference,
+                                        )
+                                        .orderBy('name'),
                               ),
                               builder: (context, snapshot) {
                                 // Customize what your widget looks like when it's loading.
@@ -255,7 +259,6 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                                                     0.0, 8.0, 0.0, 8.0),
                                             child: Container(
                                               width: double.infinity,
-                                              height: 40.0,
                                               decoration: BoxDecoration(
                                                 color:
                                                     FlutterFlowTheme.of(context)
@@ -265,12 +268,44 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                                               ),
                                               alignment: AlignmentDirectional(
                                                   -0.90, 0.00),
-                                              child: Text(
-                                                productOptionColProductOptionsRecord
-                                                    .name,
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelMedium,
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                        16.0, 0.0, 16.0, 0.0),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .primaryBackground,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                  ),
+                                                  child: Align(
+                                                    alignment:
+                                                        AlignmentDirectional(
+                                                            -1.00, 0.00),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  0.0,
+                                                                  8.0,
+                                                                  0.0,
+                                                                  8.0),
+                                                      child: Text(
+                                                        productOptionColProductOptionsRecord
+                                                            .name,
+                                                        textAlign:
+                                                            TextAlign.start,
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .labelMedium,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -282,11 +317,12 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                                                   (productOptionValuesRecord) =>
                                                       productOptionValuesRecord
                                                           .where(
-                                                'productOption',
-                                                isEqualTo:
-                                                    productOptionColProductOptionsRecord
-                                                        .reference,
-                                              ),
+                                                            'productOption',
+                                                            isEqualTo:
+                                                                productOptionColProductOptionsRecord
+                                                                    .reference,
+                                                          )
+                                                          .orderBy('value'),
                                             ),
                                             builder: (context, snapshot) {
                                               // Customize what your widget looks like when it's loading.
@@ -381,6 +417,29 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                                                                         optionValuesColProductOptionValuesRecord.addOnPrice !=
                                                                                 null
                                                                             ? optionValuesColProductOptionValuesRecord.addOnPrice
+                                                                            : 0.0,
+                                                                        0.0,
+                                                                      );
+                                                                });
+                                                              } else {
+                                                                logFirebaseEvent(
+                                                                    'PRODUCT_DETAIL_Checkbox_qt0qzozx_ON_TOGG');
+                                                                logFirebaseEvent(
+                                                                    'Checkbox_update_page_state');
+                                                                setState(() {
+                                                                  _model.removeFromSelectedProductValues(
+                                                                      optionValuesColProductOptionValuesRecord);
+                                                                  _model
+                                                                      .perUnitPrice = _model
+                                                                          .perUnitPrice +
+                                                                      valueOrDefault<
+                                                                          double>(
+                                                                        optionValuesColProductOptionValuesRecord.addOnPrice !=
+                                                                                null
+                                                                            ? valueOrDefault<double>(
+                                                                                -1 * optionValuesColProductOptionValuesRecord.addOnPrice,
+                                                                                0.0,
+                                                                              )
                                                                             : 0.0,
                                                                         0.0,
                                                                       );
@@ -490,9 +549,44 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                     child: FFButtonWidget(
                       onPressed: () async {
                         logFirebaseEvent('PRODUCT_DETAIL_AddToCartBtn_ON_TAP');
+                        var _shouldSetState = false;
+                        logFirebaseEvent('AddToCartBtn_backend_call');
+                        _model.validateCartItemResponse =
+                            await ValidateCartItemCall.call(
+                          productOptionValuesList: _model.selectedProductValues
+                              .map((e) => e.reference.id)
+                              .toList(),
+                          product: productDetailPageProductsRecord.reference.id,
+                        );
+                        _shouldSetState = true;
+                        if (!ValidateCartItemCall.success(
+                          (_model.validateCartItemResponse?.jsonBody ?? ''),
+                        )) {
+                          logFirebaseEvent('AddToCartBtn_show_snack_bar');
+                          ScaffoldMessenger.of(context).clearSnackBars();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Sorry! Please review your selections.',
+                                style: TextStyle(
+                                  color: FlutterFlowTheme.of(context)
+                                      .primaryBtnText,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12.0,
+                                ),
+                              ),
+                              duration: Duration(milliseconds: 1500),
+                              backgroundColor:
+                                  FlutterFlowTheme.of(context).primary,
+                            ),
+                          );
+                          if (_shouldSetState) setState(() {});
+                          return;
+                        }
                         logFirebaseEvent('AddToCartBtn_backend_call');
                         _model.existingCart = await CartsRecord.getDocumentOnce(
                             FFAppState().cart!);
+                        _shouldSetState = true;
                         if ((_model.existingCart != null) == false) {
                           logFirebaseEvent('AddToCartBtn_backend_call');
 
@@ -527,6 +621,7 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                                     priorityOrder: false,
                                   ),
                                   cartsRecordReference2);
+                          _shouldSetState = true;
                           logFirebaseEvent('AddToCartBtn_update_app_state');
                           setState(() {
                             FFAppState().cart =
@@ -593,6 +688,7 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                               },
                             ),
                           }, cartItemsRecordReference1);
+                          _shouldSetState = true;
                           logFirebaseEvent('AddToCartBtn_backend_call');
 
                           await FFAppState().cart!.update({
@@ -640,6 +736,7 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                                   priorityOrder: false,
                                 ),
                                 cartsRecordReference3);
+                            _shouldSetState = true;
                             logFirebaseEvent('AddToCartBtn_update_app_state');
                             setState(() {
                               FFAppState().cart = _model.newCart?.reference;
@@ -711,6 +808,7 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                               },
                             ),
                           }, cartItemsRecordReference2);
+                          _shouldSetState = true;
                           // AddCartItemToCartInDB
                           logFirebaseEvent(
                               'AddToCartBtn_AddCartItemToCartInDB');
@@ -736,8 +834,7 @@ class _ProductDetailPageWidgetState extends State<ProductDetailPageWidget> {
                         });
                         logFirebaseEvent('AddToCartBtn_navigate_back');
                         context.safePop();
-
-                        setState(() {});
+                        if (_shouldSetState) setState(() {});
                       },
                       text:
                           'Add to Cart - ${productDetailPageProductsRecord.price.toString()}',

@@ -97,6 +97,11 @@ class CartItemsRecord extends FirestoreRecord {
   int get quantity => _quantity ?? 0;
   bool hasQuantity() => _quantity != null;
 
+  // "option_values_formatted" field.
+  String? _optionValuesFormatted;
+  String get optionValuesFormatted => _optionValuesFormatted ?? '';
+  bool hasOptionValuesFormatted() => _optionValuesFormatted != null;
+
   void _initializeFields() {
     _cart = snapshotData['cart'] as DocumentReference?;
     _product = snapshotData['product'] as DocumentReference?;
@@ -114,6 +119,7 @@ class CartItemsRecord extends FirestoreRecord {
     _vendor = snapshotData['vendor'] as DocumentReference?;
     _productImage = snapshotData['product_image'] as String?;
     _quantity = castToType<int>(snapshotData['quantity']);
+    _optionValuesFormatted = snapshotData['option_values_formatted'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -166,6 +172,7 @@ Map<String, dynamic> createCartItemsRecordData({
   DocumentReference? vendor,
   String? productImage,
   int? quantity,
+  String? optionValuesFormatted,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -184,6 +191,7 @@ Map<String, dynamic> createCartItemsRecordData({
       'vendor': vendor,
       'product_image': productImage,
       'quantity': quantity,
+      'option_values_formatted': optionValuesFormatted,
     }.withoutNulls,
   );
 
@@ -211,7 +219,8 @@ class CartItemsRecordDocumentEquality implements Equality<CartItemsRecord> {
         e1?.pickupVendorName == e2?.pickupVendorName &&
         e1?.vendor == e2?.vendor &&
         e1?.productImage == e2?.productImage &&
-        e1?.quantity == e2?.quantity;
+        e1?.quantity == e2?.quantity &&
+        e1?.optionValuesFormatted == e2?.optionValuesFormatted;
   }
 
   @override
@@ -231,7 +240,8 @@ class CartItemsRecordDocumentEquality implements Equality<CartItemsRecord> {
         e?.pickupVendorName,
         e?.vendor,
         e?.productImage,
-        e?.quantity
+        e?.quantity,
+        e?.optionValuesFormatted
       ]);
 
   @override

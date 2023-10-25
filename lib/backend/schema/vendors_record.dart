@@ -56,6 +56,26 @@ class VendorsRecord extends FirestoreRecord {
   String get qrCodeUrl => _qrCodeUrl ?? '';
   bool hasQrCodeUrl() => _qrCodeUrl != null;
 
+  // "operating_from" field.
+  String? _operatingFrom;
+  String get operatingFrom => _operatingFrom ?? '';
+  bool hasOperatingFrom() => _operatingFrom != null;
+
+  // "opreating_to" field.
+  String? _opreatingTo;
+  String get opreatingTo => _opreatingTo ?? '';
+  bool hasOpreatingTo() => _opreatingTo != null;
+
+  // "status" field.
+  String? _status;
+  String get status => _status ?? '';
+  bool hasStatus() => _status != null;
+
+  // "qr_code_url_app_store" field.
+  String? _qrCodeUrlAppStore;
+  String get qrCodeUrlAppStore => _qrCodeUrlAppStore ?? '';
+  bool hasQrCodeUrlAppStore() => _qrCodeUrlAppStore != null;
+
   void _initializeFields() {
     _userEmail = snapshotData['user_email'] as String?;
     _coverImageUrl = snapshotData['cover_image_url'] as String?;
@@ -65,6 +85,10 @@ class VendorsRecord extends FirestoreRecord {
     _address = snapshotData['address'] as String?;
     _name = snapshotData['name'] as String?;
     _qrCodeUrl = snapshotData['qr_code_url'] as String?;
+    _operatingFrom = snapshotData['operating_from'] as String?;
+    _opreatingTo = snapshotData['opreating_to'] as String?;
+    _status = snapshotData['status'] as String?;
+    _qrCodeUrlAppStore = snapshotData['qr_code_url_app_store'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -109,6 +133,10 @@ Map<String, dynamic> createVendorsRecordData({
   String? address,
   String? name,
   String? qrCodeUrl,
+  String? operatingFrom,
+  String? opreatingTo,
+  String? status,
+  String? qrCodeUrlAppStore,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -119,6 +147,10 @@ Map<String, dynamic> createVendorsRecordData({
       'address': address,
       'name': name,
       'qr_code_url': qrCodeUrl,
+      'operating_from': operatingFrom,
+      'opreating_to': opreatingTo,
+      'status': status,
+      'qr_code_url_app_store': qrCodeUrlAppStore,
     }.withoutNulls,
   );
 
@@ -138,7 +170,11 @@ class VendorsRecordDocumentEquality implements Equality<VendorsRecord> {
         e1?.isThirdParty == e2?.isThirdParty &&
         e1?.address == e2?.address &&
         e1?.name == e2?.name &&
-        e1?.qrCodeUrl == e2?.qrCodeUrl;
+        e1?.qrCodeUrl == e2?.qrCodeUrl &&
+        e1?.operatingFrom == e2?.operatingFrom &&
+        e1?.opreatingTo == e2?.opreatingTo &&
+        e1?.status == e2?.status &&
+        e1?.qrCodeUrlAppStore == e2?.qrCodeUrlAppStore;
   }
 
   @override
@@ -150,7 +186,11 @@ class VendorsRecordDocumentEquality implements Equality<VendorsRecord> {
         e?.isThirdParty,
         e?.address,
         e?.name,
-        e?.qrCodeUrl
+        e?.qrCodeUrl,
+        e?.operatingFrom,
+        e?.opreatingTo,
+        e?.status,
+        e?.qrCodeUrlAppStore
       ]);
 
   @override
